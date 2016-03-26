@@ -28,8 +28,8 @@ using namespace std;
 #include <qhostinfo>
 #include <shlobj.h>
 #else
-#include <qdesktopservices.h>
-#include <qhostinfo.h>
+#include <QDesktopServices>
+#include <QHostInfo>
 #endif
 
 #include <QStringList>
