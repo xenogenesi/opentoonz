@@ -57,19 +57,26 @@ if (WIN32)
         avi/tiio_avi.cpp
         mov/tiio_movW.cpp
         3gp/tiio_3gpW.cpp)
-else ()
+elseif (APPLE)
     set(HEADERS ${HEADERS}
         mov/tiio_movM.h
         3gp/tiio_3gpM.h)
     set(SOURCES ${SOURCES}
         mov/tiio_movM.cpp
         3gp/tiio_3gpM.cpp)
+elseif (UNIX)
+    set(HEADERS ${HEADERS}
+        3gp/tiio_3gp_proxy.h
+        mov/tiio_mov_proxy.h)
+    set(SOURCES ${SOURCES}
+        mov/tiio_mov_proxy.cpp
+        3gp/tiio_3gp_proxy.cpp)
 endif ()
 
 add_library(image SHARED ${HEADERS} ${SOURCES})
 add_definitions(-DTNZIMAGE_DLL -D_USRDLL -DIMAGE_EXPORTS)
 if (APPLE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-install_name,@rpath/libimage.dylib")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-install_name,@rpath/libimage.${LIB_PREFIX}")
 endif (APPLE)
 
 message("subdir: image")

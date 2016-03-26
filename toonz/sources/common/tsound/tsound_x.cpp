@@ -5,10 +5,20 @@
 #include "tthread.h"
 
 #include <errno.h>
+#ifdef __sgi
 #include <audio.h>
+#endif
 #include <unistd.h>
 #include <queue>
 #include <set>
+
+#ifndef __sgi
+typedef unsigned long ULONG;
+typedef void *ALport;
+typedef void *ALconfig;
+typedef void *ALvalue;
+typedef void *ALpv;
+#endif
 
 //forward declaration
 namespace
@@ -48,6 +58,7 @@ public:
 
 bool TSoundOutputDeviceImp::doOpenDevice(const TSoundTrackFormat &format)
 {
+#ifdef __sgi
 	ALconfig config;
 	ALpv pvbuf[3];
 
@@ -114,6 +125,9 @@ bool TSoundOutputDeviceImp::doOpenDevice(const TSoundTrackFormat &format)
 
 	alFreeConfig(config);
 	return true;
+#else
+	return false;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -133,6 +147,7 @@ void TSoundOutputDeviceImp::insertAllRate()
 
 bool TSoundOutputDeviceImp::verifyRate()
 {
+#ifdef __sgi
 	//Sample Rate
 	ALparamInfo pinfo;
 	int ret = alGetParamInfo(AL_DEFAULT_OUTPUT, AL_RATE, &pinfo);
@@ -150,6 +165,7 @@ bool TSoundOutputDeviceImp::verifyRate()
 		return false;
 	else
 		return false;
+#endif
 	return true;
 }
 
@@ -171,6 +187,7 @@ public:
 
 void PlayTask::run()
 {
+#ifdef __sgi
 	int leftToPlay = m_sndtrack->getSampleCount();
 	int i = 0;
 
@@ -218,12 +235,14 @@ void PlayTask::run()
 		while (!m_devImp->m_queuedSoundTracks.empty())
 			m_devImp->m_queuedSoundTracks.pop();
 	}
+#endif
 }
 
 //==============================================================================
 
 TSoundOutputDevice::TSoundOutputDevice() : m_imp(new TSoundOutputDeviceImp)
 {
+#ifdef __sgi
 	if (!setDefaultOutput())
 		throw TSoundDeviceException(
 			TSoundDeviceException::UnableSetDevice, "Speaker not supported");
@@ -233,6 +252,7 @@ TSoundOutputDevice::TSoundOutputDevice() : m_imp(new TSoundOutputDeviceImp)
 		throw TSoundDeviceException(e.getType(), e.getMessage());
 	}
 	m_imp->insertAllRate();
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -247,8 +267,10 @@ TSoundOutputDevice::~TSoundOutputDevice()
 
 bool TSoundOutputDevice::installed()
 {
+#ifdef __sgi
 	if (alQueryValues(AL_SYSTEM, AL_DEFAULT_OUTPUT, 0, 0, 0, 0) <= 0)
 		return false;
+#endif
 	return true;
 }
 
@@ -267,11 +289,12 @@ bool TSoundOutputDevice::open(const TSoundTrackP &st)
 
 bool TSoundOutputDevice::close()
 {
+#ifdef __sgi
 	stop();
 	if (m_imp->m_port)
 		alClosePort(m_imp->m_port);
 	m_imp->m_port = NULL;
-
+#endif
 	return true;
 }
 
@@ -279,6 +302,7 @@ bool TSoundOutputDevice::close()
 
 void TSoundOutputDevice::play(const TSoundTrackP &st, TINT32 s0, TINT32 s1, bool loop, bool scrubbing)
 {
+#ifdef __sgi
 	if (!st->getSampleCount())
 		return;
 
@@ -318,12 +342,14 @@ void TSoundOutputDevice::play(const TSoundTrackP &st, TINT32 s0, TINT32 s1, bool
 		m_imp->m_executor.addTask(new PlayTask(m_imp, subTrack));
 	} else
 		m_imp->m_queuedSoundTracks.push(subTrack);
+#endif
 }
 
 //------------------------------------------------------------------------------
 
 void TSoundOutputDevice::stop()
 {
+#ifdef __sgi
 	if (!m_imp->m_isPlaying)
 		return;
 
@@ -331,12 +357,15 @@ void TSoundOutputDevice::stop()
 	m_imp->m_isPlaying = false;
 	m_imp->m_stopped = true;
 	m_imp->m_looped = false;
+#endif
 }
 
 //------------------------------------------------------------------------------
 
+#if 0
 double TSoundOutputDevice::getVolume()
 {
+#ifdef __sgi
 	ALpv pv[1];
 	ALfixed value[2];
 
@@ -353,10 +382,15 @@ double TSoundOutputDevice::getVolume()
 
 	double val = (((alFixedToDouble(value[0]) + alFixedToDouble(value[1])) / 2.) + 60.) / 8.05;
 	return val;
+#else
+	return 0.0f;
+#endif
 }
+#endif
 
 //------------------------------------------------------------------------------
 
+#if 0
 bool TSoundOutputDevice::setVolume(double volume)
 {
 	ALpv pv[1];
@@ -379,11 +413,14 @@ bool TSoundOutputDevice::setVolume(double volume)
 		return false;
 	return true;
 }
+#endif
 
 //------------------------------------------------------------------------------
 
+#if 0
 bool TSoundOutputDevice::supportsVolume()
 {
+#ifdef __sgi
 	ALparamInfo pinfo;
 	int ret;
 	ret = alGetParamInfo(AL_DEFAULT_OUTPUT, AL_GAIN, &pinfo);
@@ -398,7 +435,11 @@ bool TSoundOutputDevice::supportsVolume()
 	else
 		throw TSoundDeviceException(
 			TSoundDeviceException::NoMixer, "Output device is not accessible");
+#else
+	return true;
+#endif
 }
+#endif
 
 //------------------------------------------------------------------------------
 
@@ -411,24 +452,31 @@ bool TSoundOutputDevice::isPlaying() const
 
 bool TSoundOutputDevice::isLooping()
 {
+#ifdef __sgi
 	TThread::ScopedLock sl(m_imp->m_mutex);
 	return m_imp->m_looped;
+#else
+	return false;
+#endif
 }
 
 //------------------------------------------------------------------------------
 
 void TSoundOutputDevice::setLooping(bool loop)
 {
+#ifdef __sgi
 	TThread::ScopedLock sl(m_imp->m_mutex);
 	m_imp->m_looped = loop;
+#endif
 }
 
 //------------------------------------------------------------------------------
 
 TSoundTrackFormat TSoundOutputDevice::getPreferredFormat(
-	ULONG sampleRate, int channelCount, int bitPerSample)
+	TUINT32 sampleRate, int channelCount, int bitPerSample)
 {
 	TSoundTrackFormat fmt;
+#ifdef __sgi
 	int ret;
 
 	if (!m_imp->verifyRate())
@@ -485,6 +533,7 @@ TSoundTrackFormat TSoundOutputDevice::getPreferredFormat(
 	fmt.m_channelCount = channelCount;
 	fmt.m_sampleRate = sampleRate;
 	fmt.m_signedSample = true;
+#endif
 
 	return fmt;
 }
@@ -539,6 +588,7 @@ public:
 bool TSoundInputDeviceImp::doOpenDevice(const TSoundTrackFormat &format,
 										TSoundInputDevice::Source devType)
 {
+#ifdef __sgi
 	ALconfig config;
 	ALpv pvbuf[2];
 
@@ -594,6 +644,7 @@ bool TSoundInputDeviceImp::doOpenDevice(const TSoundTrackFormat &format,
 		return false; //throw TException("Could not open audio port.");
 
 	alFreeConfig(config);
+#endif
 	return true;
 }
 
@@ -614,6 +665,7 @@ void TSoundInputDeviceImp::insertAllRate()
 
 bool TSoundInputDeviceImp::verifyRate()
 {
+#ifdef __sgi
 	//Sample Rate
 	ALparamInfo pinfo;
 	int ret = alGetParamInfo(AL_DEFAULT_INPUT, AL_RATE, &pinfo);
@@ -631,6 +683,7 @@ bool TSoundInputDeviceImp::verifyRate()
 		return false;
 	else
 		return false;
+#endif
 	return true;
 }
 
@@ -652,6 +705,7 @@ public:
 
 void RecordTask::run()
 {
+#ifdef __sgi
 	TINT32 byteRecordedSample = 0;
 	int filled = alGetFilled(m_devImp->m_port);
 
@@ -695,6 +749,7 @@ void RecordTask::run()
 	alClosePort(m_devImp->m_port);
 	m_devImp->m_port = 0;
 	m_devImp->m_stopped = true;
+#endif
 }
 
 //==============================================================================
@@ -707,8 +762,10 @@ TSoundInputDevice::TSoundInputDevice() : m_imp(new TSoundInputDeviceImp)
 
 TSoundInputDevice::~TSoundInputDevice()
 {
+#ifdef __sgi
 	if (m_imp->m_port)
 		alClosePort(m_imp->m_port);
+#endif
 	delete m_imp;
 }
 
@@ -716,8 +773,10 @@ TSoundInputDevice::~TSoundInputDevice()
 
 bool TSoundInputDevice::installed()
 {
+#ifdef __sgi
 	if (alQueryValues(AL_SYSTEM, AL_DEFAULT_INPUT, 0, 0, 0, 0) <= 0)
 		return false;
+#endif
 	return true;
 }
 
@@ -859,7 +918,7 @@ void TSoundInputDevice::record(const TSoundTrackP &st, TSoundInputDevice::Source
 TSoundTrackP TSoundInputDevice::stop()
 {
 	TSoundTrackP st;
-
+#ifdef __sgi
 	if (!m_imp->m_isRecording)
 		throw TSoundDeviceException(
 			TSoundDeviceException::UnablePrepare,
@@ -890,6 +949,7 @@ TSoundTrackP TSoundInputDevice::stop()
 		}
 		m_imp->m_samplePerBlocks.clear();
 	}
+#endif
 	return st;
 }
 
@@ -897,6 +957,7 @@ TSoundTrackP TSoundInputDevice::stop()
 
 double TSoundInputDevice::getVolume()
 {
+#ifdef __sgi
 	ALpv pv[1];
 	ALfixed value[2];
 
@@ -913,12 +974,16 @@ double TSoundInputDevice::getVolume()
 
 	double val = (((alFixedToDouble(value[0]) + alFixedToDouble(value[1])) / 2.) + 60.) / 8.05;
 	return val;
+#else
+	return 0.0f;
+#endif
 }
 
 //------------------------------------------------------------------------------
 
 bool TSoundInputDevice::setVolume(double volume)
 {
+#ifdef __sgi
 	ALpv pv[1];
 	ALfixed value[2];
 
@@ -936,7 +1001,7 @@ bool TSoundInputDevice::setVolume(double volume)
 	pv[0].value.ptr = value;
 	pv[0].sizeIn = 8;
 	alSetParams(AL_DEFAULT_INPUT, pv, 1);
-
+#endif
 	return true;
 }
 
@@ -944,6 +1009,7 @@ bool TSoundInputDevice::setVolume(double volume)
 
 bool TSoundInputDevice::supportsVolume()
 {
+#ifdef __sgi
 	ALparamInfo pinfo;
 	int ret;
 	ret = alGetParamInfo(AL_DEFAULT_INPUT, AL_GAIN, &pinfo);
@@ -958,14 +1024,16 @@ bool TSoundInputDevice::supportsVolume()
 	else
 		throw TSoundDeviceException(
 			TSoundDeviceException::NoMixer, "Output device is not accessible");
+#endif
 }
 
 //------------------------------------------------------------------------------
 
 TSoundTrackFormat TSoundInputDevice::getPreferredFormat(
-	ULONG sampleRate, int channelCount, int bitPerSample)
+	TUINT32 sampleRate, int channelCount, int bitPerSample)
 {
 	TSoundTrackFormat fmt;
+#ifdef __sgi
 	int ret;
 
 	if (!m_imp->verifyRate())
@@ -1022,7 +1090,7 @@ TSoundTrackFormat TSoundInputDevice::getPreferredFormat(
 	fmt.m_channelCount = channelCount;
 	fmt.m_sampleRate = sampleRate;
 	fmt.m_signedSample = true;
-
+#endif
 	return fmt;
 }
 
@@ -1054,6 +1122,7 @@ namespace
 {
 bool isInterfaceSupported(int deviceType, int interfaceType)
 {
+#ifdef __sgi
 	ALvalue vals[16];
 	int devNum;
 
@@ -1067,6 +1136,7 @@ bool isInterfaceSupported(int deviceType, int interfaceType)
 				return true;
 		}
 	}
+#endif
 	return false;
 }
 
@@ -1074,6 +1144,7 @@ bool isInterfaceSupported(int deviceType, int interfaceType)
 
 bool setDefaultInput(TSoundInputDevice::Source type)
 {
+#ifdef __sgi
 	string label;
 
 	switch (type) {
@@ -1106,7 +1177,7 @@ bool setDefaultInput(TSoundInputDevice::Source type)
 	param.value.i = dev;
 	if (alSetParams(AL_SYSTEM, &param, 1) < 0)
 		return false; //throw TException("Error to set input device");
-
+#endif
 	return true;
 }
 
@@ -1114,6 +1185,7 @@ bool setDefaultInput(TSoundInputDevice::Source type)
 
 bool setDefaultOutput()
 {
+#ifdef __sgi
 	ALpv pvbuf[1];
 
 	if (!isInterfaceSupported(AL_DEFAULT_OUTPUT, AL_SPEAKER_IF_TYPE))
@@ -1133,7 +1205,7 @@ bool setDefaultOutput()
 
 	if (alSetParams(AL_DEFAULT_OUTPUT, pvbuf, 1) < 0)
 		return false; // throw TException("Unable to set output device params");
-
+#endif
 	return true;
 }
 
@@ -1145,6 +1217,7 @@ list<int> getInputDevice(int deviceType)
 	ALvalue vals[16];
 	ALpv quals[1];
 	list<int> devList;
+#ifdef __sgi
 	int devNum;
 
 	quals[0].param = AL_TYPE;
@@ -1161,7 +1234,7 @@ list<int> getInputDevice(int deviceType)
 			}
 		}
 	}
-
+#endif
 	return devList;
 }
 
@@ -1174,6 +1247,7 @@ list<int> getInputDevice(int deviceType, int itfType)
 	ALpv quals[1];
 	list<int> devList;
 	int devNum;
+#ifdef __sgi
 
 	quals[0].param = AL_TYPE;
 	quals[0].value.i = deviceType;
@@ -1191,7 +1265,7 @@ list<int> getInputDevice(int deviceType, int itfType)
 			}
 		}
 	}
-
+#endif
 	return devList;
 }
 
@@ -1199,6 +1273,7 @@ list<int> getInputDevice(int deviceType, int itfType)
 
 string getResourceLabel(int resourceID)
 {
+#ifdef __sgi
 	ALpv par[1];
 	char l[32];
 
@@ -1209,6 +1284,9 @@ string getResourceLabel(int resourceID)
 	alGetParams(resourceID, par, 1);
 
 	return string(l);
+#else
+	return "";
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -1216,6 +1294,7 @@ string getResourceLabel(int resourceID)
 // verify the samplerate of the select device is changed from another application
 bool isChangeOutput(ULONG sampleRate)
 {
+#ifdef __sgi
 	ALpv par[2];
 	char l[32];
 
@@ -1229,5 +1308,8 @@ bool isChangeOutput(ULONG sampleRate)
 		return true;
 	else
 		return false;
+#else
+	return true;
+#endif
 }
 }

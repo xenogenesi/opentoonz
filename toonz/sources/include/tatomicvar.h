@@ -18,11 +18,14 @@
 #elif defined(__sgi)
 #include <sys/atomic_ops.h>
 #elif defined(LINUX)
+
+#define __sgi
+
 // #include <asm/atomic.h>
 // it's broken, either include the kernel header
 //   /usr/src/linux/include/asm/atomic.h
 // or copy it here
-#include "/usr/src/linux-2.4/include/asm/atomic.h"
+// #include <asm/atomic.h>
 
 #elif defined(powerpc)
 
@@ -214,7 +217,11 @@ static __inline__ int atomic_add(int num, const atomic_t *v)
 class DVAPI TAtomicVar
 {
 public:
-#if defined(LINUX) || defined(MACOSX)
+#if defined(__sgi)
+	TAtomicVar() : m_var(0)
+	{
+	}
+#elif defined(LINUX) || defined(MACOSX)
 	TAtomicVar()
 	{
 		atomic_set(&m_var, 0);
@@ -285,7 +292,9 @@ public:
 	}
 	bool operator<=(const long &rhs)
 	{
-#if defined(LINUX) || defined(MACOSX)
+#if defined(__sgi)
+		return m_var <= rhs;
+#elif defined(LINUX) || defined(MACOSX)
 		return atomic_read(&m_var) <= rhs;
 #else
 		return m_var <= rhs;
@@ -293,7 +302,9 @@ public:
 	};
 	operator long() const
 	{
-#if defined(LINUX) || defined(MACOSX)
+#if defined(__sgi)
+		return m_var;
+#elif defined(LINUX) || defined(MACOSX)
 		return atomic_read(&m_var);
 #else
 		return m_var;
@@ -316,3 +327,5 @@ private: // to avoid well known bug in gcc3 ... fixed in later versions..
 };
 
 #endif
+
+#undef __sgi

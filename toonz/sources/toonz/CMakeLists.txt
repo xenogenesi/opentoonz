@@ -324,7 +324,7 @@ endif()
 qt5_wrap_cpp(SOURCES ${MOC_HEADERS})
 
 if(WIN32)
-    add_executable(OpenToonz_${VERSION} WIN32 ${HEADERS} ${SOURCES} ${OBJCSOURCES} ${RESOURCES} ${RC_FILE})
+    add_executable(OpenToonz_${VERSION} WIN32 ${HEADERS} ${SOURCES} ${OBJCSOURCES} ${RC_FILE})
 else()
     set(MACOSX_BUNDLE_ICON_FILE "OpenToonz.icns")
     set_source_files_properties(OpenToonz.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
@@ -355,7 +355,7 @@ if(WIN32)
         Qt5::WinMain Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml Qt5::Script Qt5::Widgets Qt5::PrintSupport
         ${GL_LIB} ${GLUT_LIB}
         tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm)
-else()
+elseif(APPLE)
     find_library(COCOA_LIB Cocoa)
 
     _find_toonz_library(EXTRA_LIBS "tnzcore;tnzbase;toonzlib;colorfx;tnzext;image;sound;toonzqt;tnztools")
@@ -367,10 +367,21 @@ else()
     set(EXTRA_LIBS ${EXTRA_LIBS} ${TNZSTDFX_Location} ${TFARM_Location})
 
     target_link_libraries(OpenToonz_${VERSION} Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml Qt5::Script Qt5::Widgets Qt5::PrintSupport ${GL_LIB} ${GLUT_LIB} ${COCOA_LIB} ${EXTRA_LIBS})
+elseif(UNIX)
+    _find_toonz_library(EXTRA_LIBS "tnzcore;tnzbase;toonzlib;colorfx;tnzext;image;sound;toonzqt;tnztools")
 
+    # 変なところにライブラリ生成するカスども
+    get_target_property(TNZSTDFX_Location tnzstdfx LOCATION)
+    get_target_property(TFARM_Location tfarm LOCATION)
+
+    set(EXTRA_LIBS ${EXTRA_LIBS} ${TNZSTDFX_Location} ${TFARM_Location})
+
+    set(EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES})
+
+    target_link_libraries(OpenToonz_${VERSION} Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml Qt5::Script Qt5::Widgets Qt5::PrintSupport ${GL_LIB} ${GLUT_LIB} ${EXTRA_LIBS})
 endif()
 
-if (APPLE)
+if (APPLE OR UNIX)
 	# CMAKE_RUNTIME_OUTPUT_DIRECTORY should be equivalent to usage on windows despite empty
 	# OSX だと CMAKE_RUNTIME_OUTPUT_DIRECTORY が空だが Windows 版と同じ使い方ができるようにしておく
     get_target_property(bin OpenToonz_${VERSION} LOCATION)

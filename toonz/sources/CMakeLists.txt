@@ -27,6 +27,7 @@ elseif (APPLE)
         set(PLATFORM 64)
     endif()
     message("PLATFORM:" ${PLATFORM})
+    set(LIB_SUFFIX "dylib")
     if (PLATFORM EQUAL 64)
         set(QT_PATH "~/Qt/5.5/clang_64/lib/")
         set(QT_LIB_PATH ${QT_PATH})
@@ -35,7 +36,7 @@ elseif (APPLE)
 
         message("CMAKE_PREFIX_PATH:" ${CMAKE_PREFIX_PATH})
         add_definitions(-DMACOSX -Di386)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64 -std=c++11 -stdlib=libc++ -fno-implicit-templates")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64 -std=c++11 -stdlib=libc++ -fno-implicit-templates -Wno-deprecated")
     elseif(PLATFORM EQUAL 32)
         set(QT_PATH "~/Qt/5.5/clang_32/lib/")
         set(QT_LIB_PATH ${QT_PATH})
@@ -47,6 +48,26 @@ elseif (APPLE)
         set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -m32")
     else()
         message(FATAL_ERROR "Invalid PLATFORM:" ${PLATFORM} ". 'PLATFORM' must be 32 or 64.")
+    endif()
+elseif(UNIX)
+    message("Unix System")
+    set(PLATFORM 64)  # XXX
+    set(LIB_SUFFIX "so")
+    add_definitions(-DLINUX)
+    set(CMAKE_CXX_STANDARD 11)
+    include_directories(
+        SYSTEM
+        /usr/include/qt
+        /usr/include/qt/QtCore
+        /usr/include/qt/QtWidgets
+    )
+
+    if (PLATFORM EQUAL 64)
+        set(QT_PATH "/usr/lib/")
+        set(QT_LIB_PATH ${QT_PATH})
+        set(CMAKE_PREFIX_PATH "${QT_PATH}cmake/")
+        message("CMAKE_PREFIX_PATH:" ${CMAKE_PREFIX_PATH})
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-implicit-templates -fpermissive -lstdc++ -std=c++11")
     endif()
 else ()
     message("Unknown System")
@@ -137,7 +158,7 @@ if(WIN32)
         set(QT_LIB ${SDKROOT}/quicktime/QT73SDK/Libraries/QTMLClient.lib)
     endif()
 else()
-    find_library(GLUT_LIB GLUT)
+    find_library(GLUT_LIB glut)
     find_library(GL_LIB OpenGL)
     find_library(Z_LIB z)
 
@@ -184,8 +205,9 @@ else()
     message("LZO:" ${LZO_INCLUDE_DIR})
 endif()
 
-find_path(BOOST_ROOT include/boost boost HINTS ${THIRDPARTY_LIBS_HINTS} PATH_SUFFIXES boost155/1.55.0_1 boost/boost_1_55_0/)
-find_package(Boost 1.55 EXACT REQUIRED)
+# find_path(BOOST_ROOT include/boost boost HINTS ${THIRDPARTY_LIBS_HINTS} PATH_SUFFIXES boost155/1.55.0_1 boost/boost_1_55_0/)
+# find_package(Boost 1.55 EXACT REQUIRED)
+find_package(Boost)
 
 include_directories(${Boost_INCLUDE_DIR} ${LZ4_LIB_INCLUDE_DIRS} ${USB_LIB_INCLUDE_DIRS} ${SUPERLU_INCLUDE_DIR} ${JPEG_INCLUDE_DIR})
 
@@ -247,9 +269,9 @@ if(PLATFORM EQUAL 32)
     add_subdirectory(t32bitsrv)
 endif()
 
-if (APPLE)
+if (APPLE OR UNIX)
     add_custom_command(TARGET executable
         POST_BUILD COMMAND
         ${CMAKE_INSTALL_NAME_TOOL} -add_rpath ${CMAKE_INSTALL_RPATH}
         $<TARGET_FILE:executable>)
-endif (APPLE)
+endif (APPLE OR UNIX)

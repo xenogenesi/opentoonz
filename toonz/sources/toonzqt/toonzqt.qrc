@@ -89,19 +89,19 @@
         <file>Resources/resetsize_on.png</file>
         <file>Resources/settings_off.svg</file>
         <file>Resources/settings_on.svg</file>
-        <file>Resources/preview_black_off.png</file>
-        <file>Resources/preview_black_on.png</file>
-        <file>Resources/preview_black_over.png</file>
-        <file>Resources/preview_checkboard_off.png</file>
-        <file>Resources/preview_checkboard_on.png</file>
-        <file>Resources/preview_checkboard_over.png</file>
+        <file>Resources/preview_black_off.PNG</file>
+        <file>Resources/preview_black_on.PNG</file>
+        <file>Resources/preview_black_over.PNG</file>
+        <file>Resources/preview_checkboard_off.PNG</file>
+        <file>Resources/preview_checkboard_on.PNG</file>
+        <file>Resources/preview_checkboard_over.PNG</file>
         <file>Resources/preview_off.png</file>
         <file>Resources/preview_on.png</file>
         <file>Resources/preview_over.png</file>
         <file>Resources/preview_toggle.png</file>
-        <file>Resources/preview_white_off.png</file>
-        <file>Resources/preview_white_on.png</file>
-        <file>Resources/preview_white_over.png</file>
+        <file>Resources/preview_white_off.PNG</file>
+        <file>Resources/preview_white_on.PNG</file>
+        <file>Resources/preview_white_over.PNG</file>
         <file>Resources/prevkey.png</file>
         <file>Resources/prevkey_disabled.png</file>
         <file>Resources/prevkey_over.png</file>

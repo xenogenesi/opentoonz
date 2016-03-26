@@ -86,7 +86,7 @@ set(SOURCES
     ../common/txsheet/tcolumnset.cpp
     ../common/tfx/binaryFx.cpp
     texternfx.cpp
-    ../common/TFx/tfx.cpp
+    ../common/tfx/tfx.cpp
     ../common/tfx/tfxcachemanager.cpp
     ../common/tfx/tcacheresource.cpp
     ../common/tfx/tcacheresourcepool.cpp
@@ -98,7 +98,7 @@ set(SOURCES
     trasterfx.cpp
     ../common/tfx/trenderer.cpp
     ../common/tfx/trenderresourcemanager.cpp
-    ../common/TFx/ttzpimagefx.cpp
+    ../common/tfx/ttzpimagefx.cpp
     ../common/tfx/unaryFx.cpp
     ../common/tfx/zeraryFx.cpp
     ../common/tapptools/tcli.cpp
@@ -137,11 +137,16 @@ if (WIN32)
         ../common/twain/ttwain_stateW.c
         ../common/twain/ttwain_utilW.c
         ../common/twain/ttwain_winW.c)
-else ()
+elseif (APPLE)
     set(OBJCSOURCES ${OBJCSOURCES}
         ../common/twain/ttwain_stateM.c
         ../common/twain/ttwain_utilM.c
         ../common/twain/ttwain_winM.c)
+elseif (UNIX)
+    set(OBJCSOURCES ${OBJCSOURCES}
+        ../common/twain/ttwain_stateX.c
+        ../common/twain/ttwain_utilX.c
+        ../common/twain/ttwain_winX.c)
 endif ()
 
 if(APPLE)
@@ -170,19 +175,22 @@ include_directories(../common/flash ${SDKROOT}/libusb/libusb-1.0.9/include)
 if(WIN32)
     set(EXTRA_LIBS
         tnzcore)
-else()
+elseif(APPLE)
     find_library(TWAIN_LIB TWAIN)
     find_library(IOKIT_LIB IOKit)
     find_library(COCOA_LIB Cocoa)
 
     set(EXTRA_LIBS
-        ${CMAKE_CURRENT_BINARY_DIR}/../tnzcore/libtnzcore.dylib
+		${CMAKE_CURRENT_BINARY_DIR}/../tnzcore/libtnzcore.${LIB_SUFFIX}
         ${USB_LIB}
         ${TWAIN_LIB}
         ${IOKIT_LIB}
         ${COCOA_LIB})
 
     target_link_libraries(tnzbase Qt5::Core Qt5::Gui)
+elseif(UNIX)
+    target_link_libraries(tnzbase Qt5::Core Qt5::Gui)
 endif()
+
 
 target_link_libraries(tnzbase Qt5::Core Qt5::Gui ${EXTRA_LIBS})

@@ -458,7 +458,11 @@ void TifReader::readLine(short *buffer, int x0, int x1, int shrink)
 
 			// Traverse the tiles row
 			while (x < m_info.m_lx) {
+#if !defined(LINUX)
 				int ret = TIFFReadRGBATile_64(m_tiff, x, y, tile);
+#else
+				int ret = TIFFReadRGBATile(m_tiff, x, y, (uint32 *)tile);
+#endif
 				assert(ret);
 
 				int tileRowSize = tmin((int)tileWidth, m_info.m_lx - x) * pixelSize;
@@ -477,7 +481,11 @@ void TifReader::readLine(short *buffer, int x0, int x1, int shrink)
 			delete[] tile;
 		} else {
 			int y = m_rowsPerStrip * m_stripIndex;
+#if !defined(LINUX)
 			int ok = TIFFReadRGBAStrip_64(m_tiff, y, (uint64 *)m_stripBuffer);
+#else
+			int ok = TIFFReadRGBAStrip(m_tiff, y, (uint32 *)m_stripBuffer);
+#endif
 			assert(ok);
 		}
 	}

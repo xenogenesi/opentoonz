@@ -473,6 +473,8 @@ void ParsedPli::setMaxThickness(double maxThickness)
 	imp->m_maxThickness = maxThickness;
 };
 
+#define ABS(a)  ((a) < 0 ? (-(a)) : (a))
+
 /*=====================================================================*/
 
 static inline UCHAR complement1(char val, bool isNegative = false)
@@ -480,7 +482,7 @@ static inline UCHAR complement1(char val, bool isNegative = false)
 	if (val == 0)
 		return isNegative ? 0x80 : 0;
 
-	return (UCHAR)(abs(val) | (val & 0x80));
+	return (UCHAR)(ABS(val) | (val & 0x80));
 }
 
 /*=====================================================================*/
@@ -490,7 +492,7 @@ static inline USHORT complement1(short val, bool isNegative = false)
 	if (val == 0)
 		return isNegative ? 0x8000 : 0;
 
-	return (USHORT)(abs(val) | (val & 0x8000));
+	return (USHORT)(ABS(val) | (val & 0x8000));
 }
 
 /*=====================================================================*/
@@ -500,7 +502,7 @@ static inline TUINT32 complement1(TINT32 val, bool isNegative = false)
 	if (val == 0)
 		return isNegative ? 0x80000000 : 0;
 
-	return (TUINT32)(abs(val) | (val & 0x80000000));
+	return (TUINT32)(ABS(val) | (val & 0x80000000));
 }
 
 /*=====================================================================*/

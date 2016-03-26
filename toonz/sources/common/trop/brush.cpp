@@ -1,4 +1,7 @@
 
+#ifdef LINUX
+#include <cstring>
+#endif
 
 #include "trop.h"
 

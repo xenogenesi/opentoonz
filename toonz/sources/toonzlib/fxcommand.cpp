@@ -38,6 +38,11 @@
 #include "tcg/tcg_function_types.h"
 #include "tcg/tcg_iterator_ops.h"
 
+#ifdef LINUX
+#include <memory>
+#endif
+
+
 /*
   Toonz currently has THREE different APIs to deal with scene objects commands:
 

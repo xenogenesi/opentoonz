@@ -1,4 +1,7 @@
 
+#ifdef LINUX
+#include <memory>
+#endif
 
 // TnzCore includes
 #include "tsimplecolorstyles.h"

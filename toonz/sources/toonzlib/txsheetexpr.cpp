@@ -29,6 +29,10 @@
 
 #include "toonz/txsheetexpr.h"
 
+#ifdef LINUX
+#include <memory>
+#endif
+
 using namespace TSyntax;
 
 //******************************************************************************

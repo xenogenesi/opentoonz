@@ -1,4 +1,6 @@
 
+/* not on linux yet */
+#if defined(MACOSX) || defined(WIN32)
 
 #include "tiffiop.h"
 #include <assert.h>
@@ -1442,4 +1444,6 @@ return 1;
 
 
 }
+#endif
+
 #endif

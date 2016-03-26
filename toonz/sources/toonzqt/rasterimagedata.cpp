@@ -12,6 +12,10 @@
 #include "toonz/sceneproperties.h"
 #include "toonz/fullcolorpalette.h"
 
+#ifdef LINUX
+#include <memory>
+#endif
+
 namespace
 {
 TVectorImageP vectorize(const TImageP &source, const TRectD &rect, const VectorizerConfiguration &config, TAffine transform)

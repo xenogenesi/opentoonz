@@ -28,7 +28,7 @@
 
 #ifndef TNZCORE_LIGHT
 
-#include <qdatetime>
+#include <qdatetime.h>
 
 DVAPI ostream &operator<<(ostream &out, const QDateTime &t);
 

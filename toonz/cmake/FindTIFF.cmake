@@ -1,6 +1,14 @@
 # looks for libtiff(4.0.3 modified)
-find_path(TIFF_INCLUDE_DIR NAMES tiffio.h HINTS ${SDKROOT} PATH_SUFFIXES tiff-4.0.3/libtiff/)
-find_library(TIFF_LIBRARY NAMES libtiff.a HINTS ${SDKROOT} PATH_SUFFIXES tiff-4.0.3/libtiff/.libs NO_DEFAULT_PATH)
+if(WIN32 OR APPLE)
+	set(_search_INC_DIR tiff-4.0.3/libtiff)
+	set(_search_LIB_DIR tiff-4.0.3/libtiff/.libs)
+endif()
+
+find_path(TIFF_INCLUDE_DIR NAMES tiffio.h HINTS ${SDKROOT} PATH_SUFFIXES ${_search_INC_DIR})
+find_library(TIFF_LIBRARY NAMES libtiff.a libtiff.so HINTS ${SDKROOT} PATH_SUFFIXES ${_search_LIB_DIR})
+
+unset(_search_INC_DIR)
+unset(_search_LIB_DIR)
 
 message("***** libtiff Header path:" ${TIFF_INCLUDE_DIR})
 message("***** libtiff Libarary path:" ${TIFF_LIBRARY})

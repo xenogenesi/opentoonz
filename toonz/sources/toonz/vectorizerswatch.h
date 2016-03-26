@@ -13,6 +13,10 @@
 //Qt includes
 #include <QFrame>
 
+#ifdef LINUX
+#include <memory>
+#endif
+
 //*****************************************************************************
 //    VectorizerSwatchArea declaration
 //*****************************************************************************

@@ -1,5 +1,9 @@
 
 
+#ifdef LINUX
+#include <cstring>
+#endif
+
 #include "tsop.h"
 #include "tsound_t.h"
 

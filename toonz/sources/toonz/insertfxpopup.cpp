@@ -52,6 +52,10 @@
 #include <QContextMenuEvent>
 #include <QMainWindow>
 
+#ifdef LINUX
+#include <memory>
+#endif
+
 using namespace DVGui;
 
 //=============================================================================
