@@ -181,7 +181,7 @@ elseif(APPLE)
     find_library(COCOA_LIB Cocoa)
 
     set(EXTRA_LIBS
-		${CMAKE_CURRENT_BINARY_DIR}/../tnzcore/libtnzcore.${LIB_SUFFIX}
+        ${CMAKE_CURRENT_BINARY_DIR}/../tnzcore/libtnzcore.${LIB_SUFFIX}
         ${USB_LIB}
         ${TWAIN_LIB}
         ${IOKIT_LIB}
@@ -189,8 +189,10 @@ elseif(APPLE)
 
     target_link_libraries(tnzbase Qt5::Core Qt5::Gui)
 elseif(UNIX)
+    set(EXTRA_LIBS
+        ${CMAKE_CURRENT_BINARY_DIR}/../tnzcore/libtnzcore.${LIB_SUFFIX})
+
     target_link_libraries(tnzbase Qt5::Core Qt5::Gui)
 endif()
-
 
 target_link_libraries(tnzbase Qt5::Core Qt5::Gui ${EXTRA_LIBS})
