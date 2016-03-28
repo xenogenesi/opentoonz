@@ -13,9 +13,10 @@
 #include <set>
 
 #ifndef __sgi
+//Warning, this file is for SGI currently,
+//otherwise we just stub out the functions.
 typedef unsigned long ULONG;
 typedef void *ALport;
-typedef void *ALconfig;
 typedef void *ALvalue;
 typedef void *ALpv;
 #endif
