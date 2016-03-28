@@ -206,9 +206,10 @@ else()
     message("LZO:" ${LZO_INCLUDE_DIR})
 endif()
 
-find_path(BOOST_ROOT include/boost boost HINTS ${THIRDPARTY_LIBS_HINTS} PATH_SUFFIXES boost155/1.55.0_1 boost/boost_1_55_0/)
-find_package(Boost 1.55 EXACT REQUIRED)
-find_package(Boost)
+if(WIN32 OR APPLE)
+    find_path(BOOST_ROOT include/boost boost HINTS ${THIRDPARTY_LIBS_HINTS} PATH_SUFFIXES boost155/1.55.0_1 boost/boost_1_55_0/)
+endif()
+find_package(Boost 1.55 REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIR} ${LZ4_LIB_INCLUDE_DIRS} ${USB_LIB_INCLUDE_DIRS} ${SUPERLU_INCLUDE_DIR} ${JPEG_INCLUDE_DIR})
 
