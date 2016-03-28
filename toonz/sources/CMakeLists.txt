@@ -51,10 +51,21 @@ elseif (APPLE)
     endif()
 elseif(UNIX)
     message("Unix System")
-    set(PLATFORM 64)  # XXX
+    if(CMAKE_SIZEOF_VOID_P MATCHES "8")
+        set(PLATFORM 64)
+    else()
+        set(PLATFORM 32)
+    endif()
+    if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+        add_definitions(-DLINUX)
+    else()
+        message(WARNING "Support for generic Unix (Not Apple or Linux) isn't yet working!")
+    endif()
+
     set(LIB_SUFFIX "so")
-    add_definitions(-DLINUX)
     set(CMAKE_CXX_STANDARD 11)
+
+    # FIXME, hard coded includes!
     include_directories(
         SYSTEM
         /usr/include/qt
@@ -62,14 +73,12 @@ elseif(UNIX)
         /usr/include/qt/QtWidgets
     )
 
-    if (PLATFORM EQUAL 64)
-        set(QT_PATH "/usr/lib/")
-        set(QT_LIB_PATH ${QT_PATH})
-        set(CMAKE_PREFIX_PATH "${QT_PATH}cmake/")
-        message("CMAKE_PREFIX_PATH:" ${CMAKE_PREFIX_PATH})
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-implicit-templates -fpermissive -lstdc++ -std=c++11")
-    endif()
-else ()
+    set(QT_PATH "/usr/lib/")
+    set(QT_LIB_PATH ${QT_PATH})
+    set(CMAKE_PREFIX_PATH "${QT_PATH}cmake/")
+    message("CMAKE_PREFIX_PATH:" ${CMAKE_PREFIX_PATH})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-implicit-templates -fpermissive -lstdc++ -std=c++11")
+else()
     message("Unknown System")
 endif ()
 
