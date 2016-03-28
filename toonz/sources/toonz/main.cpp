@@ -437,6 +437,10 @@ int main(int argc, char *argv[])
 	fmt.setStencil(true);
 	QGLFormat::setDefaultFormat(fmt);
 
+#ifdef LINUX
+	glutInit(&argc, argv);
+#endif
+
 	splash.showMessage(offsetStr + "Initializing Toonz environment ...", Qt::AlignCenter, Qt::white);
 	a.processEvents();
 
