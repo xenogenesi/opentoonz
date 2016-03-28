@@ -300,6 +300,9 @@ elseif(APPLE)
         ${AUDIOUNIT_LIB}
         ${AUDIOTB_LIB}
         ${CARBON_LIB})
+elseif(UNIX)
+    set(EXTRA_LIBS
+        ${GLU_LIB})
 endif()
 
 target_link_libraries(tnzcore
