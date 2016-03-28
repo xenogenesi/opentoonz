@@ -207,6 +207,10 @@ else()
 
     find_package(LZO REQUIRED)
     message("LZO:" ${LZO_INCLUDE_DIR})
+
+    if(UNIX)
+        pkg_check_modules(SDL_LIB REQUIRED sdl)
+    endif()
 endif()
 
 if(WIN32 OR APPLE)
