@@ -72,9 +72,14 @@ public:
 #ifdef WIN32
 		return m_registryRoot + varName;
 #else
+  #ifdef APPLE
 		QString settingsPath = QString::fromStdString(getApplicationName()) + QString("_") +
 							   QString::fromStdString(getApplicationVersion()) + QString(".app") +
 							   QString("/Contents/Resources/SystemVar.ini");
+  #else
+                // Workaround for now:
+		QString settingsPath("stuff/SystemVar.ini");
+  #endif
 		QSettings settings(settingsPath, QSettings::IniFormat);
 		QString qStr = QString::fromStdString(varName);
 		QString systemVar = settings.value(qStr).toString();
@@ -303,7 +308,7 @@ public:
 
 void VariableSet::load()
 {
-#ifdef MACOSX
+#ifndef WIN32
 	EnvGlobals::instance()->updateEnvFile();
 #endif
 	TFilePath fp = EnvGlobals::instance()->getEnvFile();
