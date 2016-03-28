@@ -50,6 +50,9 @@ elseif (APPLE)
         message(FATAL_ERROR "Invalid PLATFORM:" ${PLATFORM} ". 'PLATFORM' must be 32 or 64.")
     endif()
 elseif(UNIX)
+    # Needed for correct Qt detection
+    cmake_minimum_required(VERSION 2.8.12)
+
     message("Unix System")
     if(CMAKE_SIZEOF_VOID_P MATCHES "8")
         set(PLATFORM 64)
@@ -65,21 +68,11 @@ elseif(UNIX)
     set(LIB_SUFFIX "so")
     set(CMAKE_CXX_STANDARD 11)
 
-    # FIXME, hard coded includes!
-    include_directories(
-        SYSTEM
-        /usr/include/qt
-        /usr/include/qt/QtCore
-        /usr/include/qt/QtWidgets
-    )
+    find_package(Qt5Widgets)
 
-    set(QT_PATH "/usr/lib/")
-    set(QT_LIB_PATH ${QT_PATH})
-    set(CMAKE_PREFIX_PATH "${QT_PATH}cmake/")
-    message("CMAKE_PREFIX_PATH:" ${CMAKE_PREFIX_PATH})
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-implicit-templates -fpermissive -lstdc++ -std=c++11")
 else()
-    message("Unknown System")
+    message(ERROR "Unknown System")
 endif ()
 
 add_definitions(-DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB -DQT_SHARED)
