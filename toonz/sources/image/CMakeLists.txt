@@ -76,7 +76,7 @@ endif ()
 add_library(image SHARED ${HEADERS} ${SOURCES})
 add_definitions(-DTNZIMAGE_DLL -D_USRDLL -DIMAGE_EXPORTS)
 if (APPLE)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-install_name,@rpath/libimage.${LIB_PREFIX}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-install_name,@rpath/libimage.${LIB_PREFIX}")
 endif (APPLE)
 
 message("subdir: image")
@@ -98,7 +98,7 @@ if(WIN32)
     set(EXTRA_LIBS
         ${TNZLIBS}
         vfw32.lib)
-else()
+elseif(APPLE)
     if (PLATFORM EQUAL 32)
         find_library(CORE_SERVICES_LIB CoreServices)
         set(OSX_10_6_SDK_PATH "")
@@ -116,6 +116,10 @@ else()
         ${CARBON_LIB}
         ${CORE_SERVICES_LIB}
         ${QD_LIB})
+else()
+    # Generic Unix
+    set(EXTRA_LIBS
+        ${TNZLIBS})
 endif()
 
 target_link_libraries(image Qt5::Core Qt5::Network ${Z_LIB} ${GLUT_LIB} ${GL_LIB} ${JPEG_LIB} ${TIFF_LIB} ${PNG_LIB} ${EXTRA_LIBS})
