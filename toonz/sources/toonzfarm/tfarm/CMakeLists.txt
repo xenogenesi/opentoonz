@@ -37,9 +37,10 @@ if(WIN32)
         ws2_32.lib)
 else()
     set(EXTRA_LIBS
-		${CMAKE_CURRENT_BINARY_DIR}/../../tnzcore/libtnzcore.${LIB_SUFFIX}
-		${CMAKE_CURRENT_BINARY_DIR}/../../tnzbase/libtnzbase.${LIB_SUFFIX}
-		${CMAKE_CURRENT_BINARY_DIR}/../../toonzlib/libtoonzlib.${LIB_SUFFIX})
+        ${CMAKE_CURRENT_BINARY_DIR}/../../tnzcore/libtnzcore.${LIB_SUFFIX}
+        ${CMAKE_CURRENT_BINARY_DIR}/../../tnzbase/libtnzbase.${LIB_SUFFIX}
+        ${CMAKE_CURRENT_BINARY_DIR}/../../toonzlib/libtoonzlib.${LIB_SUFFIX}
+        ${CMAKE_CURRENT_BINARY_DIR}/../../tnzext/libtnzext.${LIB_SUFFIX})
 endif()
 
 target_link_libraries(tfarm
