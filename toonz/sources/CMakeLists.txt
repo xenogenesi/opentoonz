@@ -70,7 +70,7 @@ elseif(UNIX)
 
     find_package(Qt5Widgets)
 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-implicit-templates -fpermissive -lstdc++ -std=c++11")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -lstdc++ -std=c++11")
 else()
     message(ERROR "Unknown System")
 endif ()
@@ -163,6 +163,9 @@ else()
     find_library(GLUT_LIB glut)
     find_library(GL_LIB GL)
     find_library(Z_LIB z)
+    if(UNIX)
+        find_library(GLU_LIB GLU)
+    endif()
 
     find_package(TIFF REQUIRED)
     set(TIFF_LIB ${TIFF_LIBRARY})
@@ -204,6 +207,10 @@ else()
 
     find_package(LZO REQUIRED)
     message("LZO:" ${LZO_INCLUDE_DIR})
+
+    if(UNIX)
+        pkg_check_modules(SDL_LIB REQUIRED sdl)
+    endif()
 endif()
 
 if(WIN32 OR APPLE)

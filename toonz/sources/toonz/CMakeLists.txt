@@ -378,7 +378,7 @@ elseif(UNIX)
 
     set(EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES})
 
-    target_link_libraries(OpenToonz_${VERSION} Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml Qt5::Script Qt5::Widgets Qt5::PrintSupport ${GL_LIB} ${GLUT_LIB} ${EXTRA_LIBS})
+    target_link_libraries(OpenToonz_${VERSION} Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml Qt5::Script Qt5::Widgets Qt5::PrintSupport ${GL_LIB} ${GLUT_LIB} ${GLU_LIB} ${EXTRA_LIBS})
 endif()
 
 if (APPLE OR UNIX)

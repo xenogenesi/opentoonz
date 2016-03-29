@@ -16,7 +16,6 @@
 #include <X11/Xlib.h>
 #include <GL/glx.h>
 
-#include "xscopedlock.h"
 #include "tthread.h"
 
 #elif MACOSX
@@ -308,6 +307,12 @@ TOfflineGL::Imp *defaultOfflineGLGenerator(const TDimension &dim, const TOffline
 //-----------------------------------------------------------------------------
 
 #elif defined(LINUX)
+namespace
+{
+// The XScopedLock stuff doesn't seem finished,
+// why not just do the same as with win32 and use a Qt lock??
+static QMutex linuxImpMutex;
+}
 
 class XImplementation : public TOfflineGL::Imp
 {
@@ -365,7 +370,7 @@ public:
 
 	void makeCurrent()
 	{
-		XScopedLock xsl;
+		QMutexLocker locker(&linuxImpMutex);
 
 		//Bool ret = glXMakeCurrent(m_dpy,m_pixmap,m_context);
 
@@ -566,7 +571,7 @@ TOfflineGL::TOfflineGL(TDimension dim, const TOfflineGL *shared)
 	: m_imp(0)
 {
 #if defined(LINUX)
-	XScopedLock xsl;
+	QMutexLocker locker(&linuxImpMutex);
 #endif
 
 	const TOfflineGL::Imp *sharedImp = shared ? shared->m_imp : 0;
@@ -585,7 +590,7 @@ TOfflineGL::TOfflineGL(TDimension dim, const TOfflineGL *shared)
 TOfflineGL::TOfflineGL(const TRaster32P &raster, const TOfflineGL *shared)
 {
 #if defined(LINUX)
-	XScopedLock xsl;
+	QMutexLocker locker(&linuxImpMutex);
 #endif
 
 	//m_imp = new Imp(raster->getSize());

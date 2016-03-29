@@ -252,8 +252,14 @@ elseif(APPLE)
         ../common/tvrender/tfont_mac.cpp)
 elseif(UNIX)
     set(SOURCES ${SOURCES}
-        ../common/tsound/tsound_x.cpp
         ../common/tvrender/tfont_proxy.cpp)
+    if(SDL_LIB_FOUND)
+        set(SOURCES ${SOURCES}
+            ../common/tsound/tsound_sdl.cpp)
+    else()
+        set(SOURCES ${SOURCES}
+            ../common/tsound/tsound_x.cpp)
+    endif()
 endif()
 
 add_translation(tnzcore ${HEADERS} ${SOURCES})
@@ -294,6 +300,9 @@ elseif(APPLE)
         ${AUDIOUNIT_LIB}
         ${AUDIOTB_LIB}
         ${CARBON_LIB})
+elseif(UNIX)
+    set(EXTRA_LIBS
+        ${GLU_LIB})
 endif()
 
 target_link_libraries(tnzcore
