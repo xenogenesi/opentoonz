@@ -36,7 +36,7 @@ elseif (APPLE)
 
         message("CMAKE_PREFIX_PATH:" ${CMAKE_PREFIX_PATH})
         add_definitions(-DMACOSX -Di386)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64 -std=c++11 -stdlib=libc++ -fno-implicit-templates -Wno-deprecated")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64 -std=c++11 -stdlib=libc++ -fno-implicit-templates")
     elseif(PLATFORM EQUAL 32)
         set(QT_PATH "~/Qt/5.5/clang_32/lib/")
         set(QT_LIB_PATH ${QT_PATH})
@@ -213,6 +213,8 @@ else()
     endif()
 endif()
 
+include_directories(BEFORE ${TIFF_INCLUDE_DIR})
+
 if(WIN32 OR APPLE)
     find_path(BOOST_ROOT include/boost boost HINTS ${THIRDPARTY_LIBS_HINTS} PATH_SUFFIXES boost155/1.55.0_1 boost/boost_1_55_0/)
 endif()
@@ -278,9 +280,9 @@ if(PLATFORM EQUAL 32)
     add_subdirectory(t32bitsrv)
 endif()
 
-if (APPLE OR UNIX)
+if(APPLE OR UNIX)
     add_custom_command(TARGET executable
         POST_BUILD COMMAND
         ${CMAKE_INSTALL_NAME_TOOL} -add_rpath ${CMAKE_INSTALL_RPATH}
         $<TARGET_FILE:executable>)
-endif (APPLE OR UNIX)
+endif()
