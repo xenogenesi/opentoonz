@@ -5,6 +5,7 @@
 #include "tconvert.h"
 #include "tfilepath_io.h"
 
+#include <QDir>
 #include <QSettings>
 
 #ifdef LEVO_MACOSX
@@ -77,8 +78,11 @@ public:
 							   QString::fromStdString(getApplicationVersion()) + QString(".app") +
 							   QString("/Contents/Resources/SystemVar.ini");
   #else
-                // Workaround for now:
-		QString settingsPath("stuff/SystemVar.ini");
+		// TODO: use QStandardPaths::ConfigLocation when we drop Qt4
+		QString settingsPath(QDir::homePath());
+		settingsPath.append("/.config/");
+		settingsPath.append(getApplicationName().c_str());
+		settingsPath.append("/SystemVar.ini");
   #endif
 		QSettings settings(settingsPath, QSettings::IniFormat);
 		QString qStr = QString::fromStdString(varName);
