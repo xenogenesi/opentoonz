@@ -253,6 +253,7 @@ elseif(UNIX)
     find_package(LZO REQUIRED)
     message("LZO:" ${LZO_INCLUDE_DIR})
 
+    pkg_check_modules(FREETYPE REQUIRED freetype2)
     pkg_check_modules(SDL_LIB REQUIRED sdl)
 endif()
 
