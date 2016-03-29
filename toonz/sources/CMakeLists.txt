@@ -196,7 +196,8 @@ else()
 
     pkg_check_modules(USB_LIB REQUIRED libusb-1.0)
 
-    find_library(OPENBLAS_LIB cblas)
+	# TODO: check for them properly in some sane order with pkg-config
+    find_library(OPENBLAS_LIB NAMES cblas gslcblas openblas blas)
     message("OpenBLAS:" ${OPENBLAS_LIB})
 
     if (PLATFORM EQUAL 32)
