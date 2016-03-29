@@ -17,18 +17,26 @@ TODO: list them all?
 ### Installing required packages on Debian / Ubuntu
 
 ```
-$ sudo apt-get install build-essential cmake pkg-config libboost-all-dev qt5-default qtbase5-dev libqt5svg5-dev qtscript5-dev qttools5-dev-tools libsuperlu-dev liblz4-dev libusb-1.0-0-dev liblzo2-dev libjpeg-dev libglew-dev freeglut3-dev libsdl1.2-dev
+$ sudo apt-get install build-essential cmake pkg-config libboost-all-dev qt5-default qtbase5-dev libqt5svg5-dev qtscript5-dev qttools5-dev-tools libsuperlu-dev liblz4-dev libusb-1.0-0-dev liblzo2-dev libjpeg-dev libtiff5-dev libglew-dev freeglut3-dev libsdl1.2-dev libfreetype6-dev
 ```
 
 Notes:
 * Debian doesn't seem to be a package yet for libpng 1.6, but try libpng16-dev
-* libtiff5-dev should probably work, test this
+* libtiff5-dev should work but we need to fix FindTIFF.cmake to use pkg-config
+* It's possible we also need libgsl2 (or maybe libopenbias-dev)
 
 ### Installing required packages on RedHat / Mageia
 
 TODO
 ```
 $ rpm ...
+```
+
+### Installing required packages on ArchLinux
+
+TODO
+```
+$ pacman ...
 ```
 
 ## Build instructions
@@ -77,9 +85,12 @@ Note the generated file must not actually contain "$HOME", this shell command re
 
 ### Building the tiff library from thirdparty
 
+TODO: make sure we can use the system libtiff instead and remove this section.
+
 ```
 $ cd opentoonz/thirdparty/tiff-4.0.3
 $ ./configure && make
+$ cd -
 ```
 
 ### Building the libpng library from thirdparty
