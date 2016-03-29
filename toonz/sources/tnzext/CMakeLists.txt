@@ -75,7 +75,7 @@ endif()
 add_library(tnzext SHARED ${HEADERS} ${SOURCES} ${OBJCSOURCES})
 
 if (APPLE)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-install_name,@rpath/libtnzext.${LIB_SUFFIX}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-install_name,@rpath/libtnzext.${LIB_SUFFIX}")
 endif (APPLE)
 
 add_definitions(-DTNZEXT_EXPORTS)
@@ -96,8 +96,8 @@ if(WIN32)
         tnzcore tnzbase)
 else()
     set(EXTRA_LIBS
-		${CMAKE_CURRENT_BINARY_DIR}/../tnzcore/libtnzcore.${LIB_SUFFIX}
-		${CMAKE_CURRENT_BINARY_DIR}/../tnzbase/libtnzbase.${LIB_SUFFIX})
+        ${CMAKE_CURRENT_BINARY_DIR}/../tnzcore/libtnzcore.${LIB_SUFFIX}
+        ${CMAKE_CURRENT_BINARY_DIR}/../tnzbase/libtnzbase.${LIB_SUFFIX})
 
     if (UNIX AND NOT APPLE)
         set(EXTRA_LIBS ${EXTRA_LIBS} ${OPENBLAS_LIB})

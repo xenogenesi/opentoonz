@@ -23,7 +23,7 @@ set(SOURCES
 add_library(tfarm SHARED ${HEADERS} ${SOURCES})
 add_definitions(-DTFARM_EXPORTS)
 if (APPLE)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-install_name,@rpath/libtfarm.${LIB_SUFFIX}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-install_name,@rpath/libtfarm.${LIB_SUFFIX}")
 endif (APPLE)
 
 message("subdir: tfarm")
