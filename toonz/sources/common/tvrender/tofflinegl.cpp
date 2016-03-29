@@ -13,6 +13,7 @@
 // Platform-specific includes
 #if defined(LINUX)
 
+#include "qtofflinegl.h"
 #include <X11/Xlib.h>
 #include <GL/glx.h>
 
@@ -509,10 +510,11 @@ public:
 	}
 };
 
-TOfflineGL::Imp *defaultOfflineGLGenerator(const TDimension &dim)
+TOfflineGL::Imp *defaultOfflineGLGenerator(const TDimension &dim, const TOfflineGL::Imp *shared)
 {
 	//return new XImplementation(dim); // XXX
-	return NULL;
+	return new QtOfflineGL(dim, shared);
+	//return NULL;
 }
 
 #elif MACOSX

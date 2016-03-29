@@ -152,6 +152,10 @@ void QtOfflineGL::createContext(TDimension rasterSize, const TOfflineGL::Imp *sh
   fmt.setPlane(0);
   fmt.setDirectRendering(false);
 #endif
+#elif LINUX
+	fmt = QGLFormat::defaultFormat();
+	//printf("GL Version: %s\n",glGetString(GL_VERSION));
+	fmt.setVersion(2, 1); /* XXX? */
 #endif
 	/* FIXME: ここでいう QPixmap は Level Strip のセルに相当する. 
 	 QPixmap に GLContext を生成して bind できれば描画したベクタのラスタ画像がそこに反映されるはずだが
@@ -299,6 +303,16 @@ void QtOfflineGLPBuffer::createContext(TDimension rasterSize)
 	fmt.setAccum(false);
 	fmt.setPlane(0);
 #elif MACOSX
+	fmt.setAlphaBufferSize(1);
+	fmt.setAlpha(false);
+	fmt.setRgba(true);
+	fmt.setDepthBufferSize(24);
+	fmt.setDepth(true);
+	fmt.setStencilBufferSize(8);
+	fmt.setStencil(true);
+	fmt.setAccum(false);
+	fmt.setPlane(0);
+#elif LINUX
 	fmt.setAlphaBufferSize(1);
 	fmt.setAlpha(false);
 	fmt.setRgba(true);
