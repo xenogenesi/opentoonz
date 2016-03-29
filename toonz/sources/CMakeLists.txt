@@ -159,10 +159,57 @@ if(WIN32)
     if (PLATFORM EQUAL 32)
         set(QT_LIB ${SDKROOT}/quicktime/QT73SDK/Libraries/QTMLClient.lib)
     endif()
-else()
-    # Apple & Linux
-    find_library(GLUT_LIB glut)
+elseif(APPLE)
+    find_library(GLUT_LIB GLUT)
+    find_library(GL_LIB OpenGL)
+    find_library(Z_LIB z)
+
+    find_package(TIFF REQUIRED)
+    set(TIFF_LIB ${TIFF_LIBRARY})
+    # the libraries have not .pc nor preferred Find*.cmake. use custom modules.
+    find_package(PNG REQUIRED)
+    message("******* libpng:" ${PNG_LIBRARY})
+    set(PNG_LIB ${PNG_LIBRARY})
+    find_package(GLEW)
+
+    find_package(SuperLU REQUIRED)
+    set(SUPERLU_INCLUDE_DIR ${SUPERLU_INCLUDE_DIR}/superlu)
+    set(SUPERLU_LIB ${SUPERLU_LIBRARY})
+    message("SuperLU:" ${SUPERLU_INCLUDE_DIR})
+
+    find_package(JPEG REQUIRED)
+
+    # the libraries have .pc
+    find_package(PkgConfig)
+    if(GLEW-NOTFOUND)
+        pkg_check_modules(GLEW REQUIRED glew)
+    endif()
+    set(GLEW_LIB ${GLEW_LIBRARIES})
+
+    pkg_check_modules(LZ4_LIB REQUIRED liblz4)
+
+    message("**************** lz4 lib:" ${LZ4_LIB_INCLUDE_DIRS})
+    find_path(LZ4_STATIC lz4frame_static.h PATH ${LZ4_LIB_INCLUDE_DIRS})
+    if(LZ4_STATIC-FOUND)
+       add_definitions(-DLZ4_STATIC)
+    endif()
+
+    pkg_check_modules(USB_LIB REQUIRED libusb-1.0)
+    set(OPENBLAS_LIB) # unused?
+    if (PLATFORM EQUAL 32)
+        find_library(QT_LIB QuickTime)
+    endif()
+
+    set(JPEG_LIB ${JPEG_LIBRARY})
+    set(LZ4_LIB ${LZ4_LIB_LDFLAGS})
+
+    find_package(LZO REQUIRED)
+    message("LZO:" ${LZO_INCLUDE_DIR})
+
+elseif(UNIX)
     find_library(GL_LIB GL)
+    find_library(GLU_LIB GLU)
+    find_library(GLUT_LIB glut)
     find_library(Z_LIB z)
 
     find_package(TIFF REQUIRED)
@@ -200,21 +247,13 @@ else()
     find_library(OPENBLAS_LIB NAMES cblas gslcblas openblas blas)
     message("OpenBLAS:" ${OPENBLAS_LIB})
 
-    if (PLATFORM EQUAL 32)
-        find_library(QT_LIB QuickTime)
-    endif()
-
     set(JPEG_LIB ${JPEG_LIBRARY})
     set(LZ4_LIB ${LZ4_LIB_LDFLAGS})
 
     find_package(LZO REQUIRED)
     message("LZO:" ${LZO_INCLUDE_DIR})
 
-    # Non Apple Unix (Linux/BSD)
-    if(UNIX AND NOT APPLE)
-        find_library(GLU_LIB GLU)
-        pkg_check_modules(SDL_LIB REQUIRED sdl)
-    endif()
+    pkg_check_modules(SDL_LIB REQUIRED sdl)
 endif()
 
 include_directories(BEFORE ${TIFF_INCLUDE_DIR})
