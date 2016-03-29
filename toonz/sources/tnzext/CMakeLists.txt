@@ -99,6 +99,10 @@ else()
 		${CMAKE_CURRENT_BINARY_DIR}/../tnzcore/libtnzcore.${LIB_SUFFIX}
 		${CMAKE_CURRENT_BINARY_DIR}/../tnzbase/libtnzbase.${LIB_SUFFIX})
 
+    if (UNIX AND NOT APPLE)
+        set(EXTRA_LIBS ${EXTRA_LIBS} ${OPENBLAS_LIB})
+    endif()
+
     target_link_libraries(tnzext
         Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::Network
         ${ACCE_LIB} ${GLUT_LIB} ${GL_LIB} ${SUPERLU_LIB} ${EXTRA_LIBS})

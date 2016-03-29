@@ -195,7 +195,10 @@ else()
     endif()
 
     pkg_check_modules(USB_LIB REQUIRED libusb-1.0)
-    set(OPENBLAS_LIB) # unused?
+
+    find_library(OPENBLAS_LIB cblas)
+    message("OpenBLAS:" ${OPENBLAS_LIB})
+
     if (PLATFORM EQUAL 32)
         find_library(QT_LIB QuickTime)
     endif()

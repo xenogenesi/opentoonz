@@ -376,7 +376,7 @@ elseif(UNIX)
 
     set(EXTRA_LIBS ${EXTRA_LIBS} ${TNZSTDFX_Location} ${TFARM_Location})
 
-    set(EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES})
+    set(EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES} ${OPENBLAS_LIB})
 
     target_link_libraries(OpenToonz_${VERSION} Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml Qt5::Script Qt5::Widgets Qt5::PrintSupport ${GL_LIB} ${GLUT_LIB} ${GLU_LIB} ${EXTRA_LIBS})
 endif()
