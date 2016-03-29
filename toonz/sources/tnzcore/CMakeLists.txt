@@ -252,7 +252,7 @@ elseif(APPLE)
         ../common/tvrender/tfont_mac.cpp)
 elseif(UNIX)
     set(SOURCES ${SOURCES}
-        ../common/tvrender/tfont_proxy.cpp)
+        ../common/tvrender/tfont_ft2.cpp)
     if(SDL_LIB_FOUND)
         set(SOURCES ${SOURCES}
             ../common/tsound/tsound_sdl.cpp)
@@ -301,6 +301,7 @@ elseif(APPLE)
         ${AUDIOTB_LIB}
         ${CARBON_LIB})
 elseif(UNIX)
+	include_directories(${FREETYPE_INCLUDE_DIRS})
     set(EXTRA_LIBS
         ${GLU_LIB})
 endif()
