@@ -256,11 +256,13 @@ void TFontManager::setFamily(const wstring family)
 
 	m_pimpl->m_currentFamily = family;
 
-	/* XXX: if current style is not valid for family, reset it? */
+	// XXX: if current style is not valid for family, reset it?
+	// doing so asserts when chosing a font in the GUI
+/*
 	QStringList styles = m_pimpl->m_qfontdb->styles(qFamily);
 	if (styles.contains(QString::fromStdWString(m_pimpl->m_currentTypeface)))
 		m_pimpl->m_currentTypeface = L"";
-
+*/
 	delete m_pimpl->m_currentFont;
 	m_pimpl->m_currentFont = new TFont(m_pimpl->m_currentFamily,
 		m_pimpl->m_currentTypeface, m_pimpl->m_size);
