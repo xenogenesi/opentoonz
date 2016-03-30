@@ -9,8 +9,9 @@
 //#include FT_FREETYPE_H
 
 
-#include <QFontDatabase>
 #include <QFont>
+#include <QFontDatabase>
+#include <QFontMetrics>
 
 
 #include <vector>
@@ -39,6 +40,7 @@ struct TFont::Impl {
 	bool m_hasKerning;
 	int m_hasVertical;
 	QFont m_font;
+	//XXX:cache QFontMetrics m_metrics; ?
 
 	//  KerningPairs m_kerningPairs;
 
@@ -127,40 +129,38 @@ TPoint TFont::getDistance(wchar_t firstChar, wchar_t secondChar) const
 
 int TFont::getMaxHeight() const
 {
-	//FIXME
-	return 0;//m_pimpl->m_ascender - m_pimpl->m_descender;
+	QFontMetrics metrics(m_pimpl->m_font);
+	return metrics.ascent() - metrics.descent();
 }
 
 //-----------------------------------------------------------------------------
 
 int TFont::getMaxWidth() const
 {
-	//FIXME
-	assert(!"not implemented yet");
-	return 100;
+	QFontMetrics metrics(m_pimpl->m_font);
+	return metrics.maxWidth();
 }
 //-----------------------------------------------------------------------------
 
 int TFont::getLineAscender() const
 {
-	//FIXME
-	return 0;//return m_pimpl->m_ascender;
+	QFontMetrics metrics(m_pimpl->m_font);
+	return metrics.ascent();
 }
 
 //-----------------------------------------------------------------------------
 
 int TFont::getLineDescender() const
 {
-	//FIXME
-	return 0;//return m_pimpl->m_descender;
+	QFontMetrics metrics(m_pimpl->m_font);
+	return metrics.descent();
 }
 
 //-----------------------------------------------------------------------------
 
 bool TFont::hasKerning() const
 {
-	//FIXME
-	return true;
+	return m_pimpl->m_font.kerning();
 }
 
 //-----------------------------------------------------------------------------
