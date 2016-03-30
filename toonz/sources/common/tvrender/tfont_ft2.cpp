@@ -12,6 +12,7 @@
 #include <QFont>
 #include <QFontDatabase>
 #include <QFontMetrics>
+#include <QRawFont>
 
 
 #include <vector>
@@ -121,8 +122,21 @@ TPoint TFont::drawChar(TRasterCM32P &outImage, TPoint &unused, int inkId, wchar_
 
 TPoint TFont::getDistance(wchar_t firstChar, wchar_t secondChar) const
 {
-	//FIXME
-	return TPoint(0, 0);
+	QRawFont raw(QRawFont::fromFont(m_pimpl->m_font));
+	QChar chars[2];
+	quint32 indices[2];
+	QPointF advances[2];
+	int count = 2;
+
+	if (!raw.glyphIndexesForChars(chars, 2, indices, &count) || count != 2)
+		return TPoint(0, 0);
+
+	if (!raw.advancesForGlyphIndexes(indices, advances, 2, QRawFont::KernedAdvances))
+		return TPoint(0, 0);
+
+	int advance = (int)(advances[1].x());
+
+	return TPoint(advance, 0);
 }
 
 //-----------------------------------------------------------------------------
