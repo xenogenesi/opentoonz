@@ -119,14 +119,6 @@ $ make
 
 The build takes a lot of time, be patient.
 
-#### Parallel build
-
-The make -j support is not yet fully working, however you might try:
-
-```
-make -j4 && rm */*.so && make
-```
-
 ### Debugging the build
 
 If something doesn't compile or link, please run `make` this way to help spot the problem:
