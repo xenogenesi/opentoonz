@@ -109,3 +109,7 @@ else()
         Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::Network
         ${ACCE_LIB} ${GLUT_LIB} ${GL_LIB} ${SUPERLU_LIB} ${EXTRA_LIBS})
 endif()
+
+if (UNIX AND NOT APPLE)
+    INSTALL(TARGETS tnzext LIBRARY DESTINATION usr/lib/toonz)
+endif()

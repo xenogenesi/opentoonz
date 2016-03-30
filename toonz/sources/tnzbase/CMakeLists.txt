@@ -197,3 +197,7 @@ elseif(UNIX)
 endif()
 
 target_link_libraries(tnzbase Qt5::Core Qt5::Gui ${EXTRA_LIBS})
+
+if (UNIX AND NOT APPLE)
+    INSTALL(TARGETS tnzbase LIBRARY DESTINATION usr/lib/toonz)
+endif()

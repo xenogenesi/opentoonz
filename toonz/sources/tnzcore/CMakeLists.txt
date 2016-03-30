@@ -310,3 +310,7 @@ target_link_libraries(tnzcore
     Qt5::OpenGL Qt5::Network
     ${GL_LIB} ${GLUT_LIB} ${QT_LIB} ${Z_LIB} ${JPEG_LIB} ${LZ4_LIB}
     ${EXTRA_LIBS})
+
+if (UNIX AND NOT APPLE)
+    INSTALL(TARGETS tnzcore LIBRARY DESTINATION usr/lib/toonz)
+endif()

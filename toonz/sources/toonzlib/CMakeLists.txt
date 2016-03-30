@@ -353,3 +353,7 @@ else()
 
     target_link_libraries(toonzlib Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::Script ${GLUT_LIB} ${GL_LIB} ${EXTRA_LIBS})
 endif()
+
+if (UNIX AND NOT APPLE)
+    INSTALL(TARGETS toonzlib LIBRARY DESTINATION usr/lib/toonz)
+endif()

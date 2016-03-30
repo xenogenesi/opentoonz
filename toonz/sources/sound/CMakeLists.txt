@@ -32,3 +32,7 @@ else()
 endif()
 
 target_link_libraries(sound Qt5::Core ${EXTRA_LIBS})
+
+if (UNIX AND NOT APPLE)
+    INSTALL(TARGETS sound LIBRARY DESTINATION usr/lib/toonz)
+endif()

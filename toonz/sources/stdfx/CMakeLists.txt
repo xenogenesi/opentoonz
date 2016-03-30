@@ -277,3 +277,7 @@ if (APPLE)
 else ()
    target_link_libraries(tnzstdfx Qt5::Core Qt5::Gui Qt5::OpenGL ${GL_LIB} ${GLEW_LIB} ${TNZLIBS})
 endif ()
+
+if (UNIX AND NOT APPLE)
+    INSTALL(TARGETS tnzstdfx LIBRARY DESTINATION usr/lib/toonz)
+endif()

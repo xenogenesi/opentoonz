@@ -50,3 +50,7 @@ endif()
 target_link_libraries(tfarm
     Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::Network
     ${GLUT_LIB} ${GL_LIB} ${EXTRA_LIBS})
+
+if (UNIX AND NOT APPLE)
+    INSTALL(TARGETS tfarm LIBRARY DESTINATION usr/lib/toonz)
+endif()

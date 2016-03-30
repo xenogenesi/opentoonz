@@ -420,4 +420,6 @@ if (APPLE)
 
 endif (APPLE)
 
-
+if (UNIX AND NOT APPLE)
+  install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/OpenToonz_${VERSION} DESTINATION usr/bin)
+endif()
