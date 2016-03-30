@@ -252,7 +252,7 @@ elseif(APPLE)
         ../common/tvrender/tfont_mac.cpp)
 elseif(UNIX)
     set(SOURCES ${SOURCES}
-        ../common/tvrender/tfont_ft2.cpp)
+        ../common/tvrender/tfont_qt.cpp)
     if(SDL_LIB_FOUND)
         set(SOURCES ${SOURCES}
             ../common/tsound/tsound_sdl.cpp)
