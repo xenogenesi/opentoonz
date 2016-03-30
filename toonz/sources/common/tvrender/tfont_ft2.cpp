@@ -41,7 +41,8 @@ struct TFont::Impl {
 	bool m_hasKerning;
 	int m_hasVertical;
 	QFont m_font;
-	//XXX:cache QFontMetrics m_metrics; ?
+	//XXX:cache a QFontMetrics m_metrics; ?
+	//XXX:cache a QRawFont m_raw; ?
 
 	//  KerningPairs m_kerningPairs;
 
@@ -97,7 +98,7 @@ TFont::Impl::~Impl()
 TPoint TFont::drawChar(TVectorImageP &image, wchar_t charcode, wchar_t nextCharCode) const
 {
 	//FIXME
-	return TPoint(0, 0);
+	return getDistance(charcode, nextCharCode);
 }
 
 //-----------------------------------------------------------------------------
@@ -115,7 +116,7 @@ TPoint TFont::drawChar(TRasterGR8P &outImage, TPoint &unused, wchar_t charcode, 
 TPoint TFont::drawChar(TRasterCM32P &outImage, TPoint &unused, int inkId, wchar_t charcode, wchar_t nextCharCode) const
 {
 	//FIXME
-	return TPoint(0, 0);
+	return getDistance(charcode, nextCharCode);
 }
 
 //-----------------------------------------------------------------------------
@@ -123,7 +124,7 @@ TPoint TFont::drawChar(TRasterCM32P &outImage, TPoint &unused, int inkId, wchar_
 TPoint TFont::getDistance(wchar_t firstChar, wchar_t secondChar) const
 {
 	QRawFont raw(QRawFont::fromFont(m_pimpl->m_font));
-	QChar chars[2];
+	QChar chars[2] = { firstChar, secondChar };
 	quint32 indices[2];
 	QPointF advances[2];
 	int count = 2;
@@ -134,7 +135,7 @@ TPoint TFont::getDistance(wchar_t firstChar, wchar_t secondChar) const
 	if (!raw.advancesForGlyphIndexes(indices, advances, 2, QRawFont::KernedAdvances))
 		return TPoint(0, 0);
 
-	int advance = (int)(advances[1].x());
+	int advance = (int)(advances[0].x());
 
 	return TPoint(advance, 0);
 }
