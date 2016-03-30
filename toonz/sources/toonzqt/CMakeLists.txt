@@ -221,7 +221,12 @@ message("subdir: toonzqt")
 message("type:" ${CMAKE_SHARED_LIBRARY_SUFFIX})
 message("Bin: " ${CMAKE_CURRENT_BINARY_DIR})
 
-_find_toonz_library(EXTRA_LIBS "tnzcore;tnzbase;tnzext;toonzlib;sound")
+if(NOT UNIX OR APPLE)
+  _find_toonz_library(EXTRA_LIBS "tnzcore;tnzbase;tnzext;toonzlib;sound")
+else()
+  include_directories(../tnzcore ../tnzbase ../tnzext ../toonzlib ../sound)
+  set(EXTRA_LIBS tnzcore tnzbase tnzext toonzlib sound)
+endif()
 
 if(WIN32)
     set(EXTRA_LIBS ${EXTRA_LIBS}

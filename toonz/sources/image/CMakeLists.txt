@@ -83,6 +83,7 @@ message("subdir: image")
 message("Bin: " ${CMAKE_CURRENT_BINARY_DIR})
 
 include_directories(
+    ../tnzcore ../tnzbase
     ${TIFF_INCLUDE_DIR}
     ${SDKROOT}/LibJPEG/jpeg-9
     ${SDKROOT}/libpng-1.6.21)
@@ -93,7 +94,9 @@ if (WIN32)
     endif()
 endif()
 
-_find_toonz_library(TNZLIBS "tnzcore;tnzbase")
+if (UNIX AND NOT APPLE)
+    _find_toonz_library(TNZLIBS "tnzcore;tnzbase")
+endif()
 
 if(WIN32)
     set(EXTRA_LIBS
@@ -119,8 +122,7 @@ elseif(APPLE)
         ${QD_LIB})
 else()
     # Generic Unix
-    set(EXTRA_LIBS
-        ${TNZLIBS})
+    set(EXTRA_LIBS tnzcore tnzbase)
 endif()
 
 target_link_libraries(image Qt5::Core Qt5::Network ${Z_LIB} ${GLUT_LIB} ${GL_LIB} ${JPEG_LIB} ${TIFF_LIB} ${PNG_LIB} ${EXTRA_LIBS})

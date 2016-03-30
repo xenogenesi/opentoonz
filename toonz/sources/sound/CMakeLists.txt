@@ -22,7 +22,13 @@ message("subdir: sound")
 message("type:" ${CMAKE_SHARED_LIBRARY_SUFFIX})
 message("Bin: " ${CMAKE_CURRENT_BINARY_DIR})
 
-_find_toonz_library(EXTRA_LIBS tnzcore)
-message("ToonzCore: " ${EXTRA_LIBS})
+include_directories(../tnzcore)
+
+if (UNIX AND NOT APPLE)
+    set(EXTRA_LIBS tnzcore)
+else()
+    _find_toonz_library(EXTRA_LIBS tnzcore)
+    message("ToonzCore: " ${EXTRA_LIBS})
+endif()
 
 target_link_libraries(sound Qt5::Core ${EXTRA_LIBS})

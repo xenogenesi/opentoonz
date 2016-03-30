@@ -254,12 +254,16 @@ message("subdir: tnzstdfx")
 message("Bin: " ${CMAKE_CURRENT_BINARY_DIR})
 
 if(GLEW_FOUND)
-    include_directories(${GLEW_INCLUDE_DIRS})
+    include_directories(${GLEW_INCLUDE_DIRS} ../tnzcore ../tnzbase ../toonzlib)
 else()
-    include_directories(${SDKROOT}/glew/glew-1.9.0/include)
+    include_directories(${SDKROOT}/glew/glew-1.9.0/include ../tnzcore ../tnzbase ../toonzlib)
 endif()
 
-_find_toonz_library(TNZLIBS "tnzcore;tnzbase;toonzlib")
+if (NOT UNIX OR APPLE)
+    _find_toonz_library(TNZLIBS "tnzcore;tnzbase;toonzlib")
+else()
+    set(TNZLIBS tnzcore tnzbase toonzlib)
+endif()
 
 if (APPLE)
    # macports を使っていると symbol が非互換の /opt/lib が引っ掛かってしまう

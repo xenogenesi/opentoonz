@@ -26,7 +26,13 @@ message("subdir: colorfx")
 message("type:" ${CMAKE_SHARED_LIBRARY_SUFFIX})
 message("Bin: " ${CMAKE_CURRENT_BINARY_DIR})
 
-_find_toonz_library(EXTRA_LIBS "tnzcore;tnzbase")
+include_directories(../tnzcore ../tnzbase)
+
+if(UNIX AND NOT APPLE)
+    set(EXTRA_LIBS tnzcore tnzbase)
+else()
+    _find_toonz_library(EXTRA_LIBS "tnzcore;tnzbase")
+endif()
 
 message("FIND_FILE:" ${EXTRA_LIBS})
 

@@ -108,8 +108,12 @@ endif (APPLE)
 message("subdir: tnztools")
 message("Bin: " ${CMAKE_CURRENT_BINARY_DIR})
 
-include_directories(../include/tools ${SDKROOT}/superlu/SupperLU_4.1/SRC)
+include_directories(../include/tools ${SDKROOT}/superlu/SupperLU_4.1/SRC ../tnzbase ../tnzext ../toonzlib ../toonzq)
 
-_find_toonz_library(EXTRA_LIBS "tnzcore;tnzbase;tnzext;toonzlib;toonzqt")
+if (NOT UNIX OR APPLE)
+    _find_toonz_library(EXTRA_LIBS "tnzcore;tnzbase;tnzext;toonzlib;toonzqt")
+else()
+    set(EXTRA_LIBS tnzbase tnzcore tnzext toonzlib toonzqt)
+endif()
 
 target_link_libraries(tnztools Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Network Qt5::OpenGL ${GLUT_LIB} ${EXTRA_LIBS} ${GL_LIB})

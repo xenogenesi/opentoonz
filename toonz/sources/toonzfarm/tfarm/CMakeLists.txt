@@ -29,18 +29,22 @@ endif (APPLE)
 message("subdir: tfarm")
 message("Bin: " ${CMAKE_CURRENT_BINARY_DIR})
 
-include_directories(../include)
+include_directories(../include ../../tnzcore ../../tnzbase ../../toonzlib ../../tnzext)
 
 if(WIN32)
     set(EXTRA_LIBS
         tnzcore tnzbase toonzlib
         ws2_32.lib)
 else()
-    set(EXTRA_LIBS
-        ${CMAKE_CURRENT_BINARY_DIR}/../../tnzcore/libtnzcore.${LIB_SUFFIX}
-        ${CMAKE_CURRENT_BINARY_DIR}/../../tnzbase/libtnzbase.${LIB_SUFFIX}
-        ${CMAKE_CURRENT_BINARY_DIR}/../../toonzlib/libtoonzlib.${LIB_SUFFIX}
-        ${CMAKE_CURRENT_BINARY_DIR}/../../tnzext/libtnzext.${LIB_SUFFIX})
+    if(APPLE)
+        set(EXTRA_LIBS
+            ${CMAKE_CURRENT_BINARY_DIR}/../../tnzcore/libtnzcore.${LIB_SUFFIX}
+            ${CMAKE_CURRENT_BINARY_DIR}/../../tnzbase/libtnzbase.${LIB_SUFFIX}
+            ${CMAKE_CURRENT_BINARY_DIR}/../../toonzlib/libtoonzlib.${LIB_SUFFIX}
+            ${CMAKE_CURRENT_BINARY_DIR}/../../tnzext/libtnzext.${LIB_SUFFIX})
+    else()
+        set(EXTRA_LIBS tnzcore tnzbase toonzlib tnzext)
+    endif()
 endif()
 
 target_link_libraries(tfarm

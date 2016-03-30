@@ -170,7 +170,7 @@ message("Bin: " ${CMAKE_CURRENT_BINARY_DIR})
 #message("Exe: " ${EXECUTABLE_OUTPUT_PATH})
 #message("Sources:" ${SOURCES})
 
-include_directories(../common/flash ${SDKROOT}/libusb/libusb-1.0.9/include)
+include_directories(../common/flash ${SDKROOT}/libusb/libusb-1.0.9/include ../tnzcore)
 
 if(WIN32)
     set(EXTRA_LIBS
@@ -189,11 +189,11 @@ elseif(APPLE)
 
     target_link_libraries(tnzbase Qt5::Core Qt5::Gui)
 elseif(UNIX)
-    set(EXTRA_LIBS
+    set(EXTRA_LIBS tnzcore
         ${CMAKE_CURRENT_BINARY_DIR}/../tnzcore/libtnzcore.${LIB_SUFFIX}
         ${SDL_LIB_LIBRARIES})
 
-    target_link_libraries(tnzbase Qt5::Core Qt5::Gui)
+    target_link_libraries(tnzbase Qt5::Core Qt5::Gui ${EXTRA_LIBS})
 endif()
 
 target_link_libraries(tnzbase Qt5::Core Qt5::Gui ${EXTRA_LIBS})

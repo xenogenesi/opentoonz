@@ -87,7 +87,7 @@ if (APPLE)
 find_library(ACCE_LIB Accelerate)
 endif (APPLE)
 
-include_directories(${SDKROOT}/superlu/SuperLU_4.1/SRC)
+include_directories(${SDKROOT}/superlu/SuperLU_4.1/SRC ../tnzcore ../tnzbase)
 
 if(WIN32)
     target_link_libraries(tnzext
@@ -95,12 +95,14 @@ if(WIN32)
         ${GLUT_LIB} ${GL_LIB} ${SUPERLU_LIB} ${OPENBLAS_LIB} ${EXTRA_LIBS}
         tnzcore tnzbase)
 else()
+    if(APPLE)
     set(EXTRA_LIBS
         ${CMAKE_CURRENT_BINARY_DIR}/../tnzcore/libtnzcore.${LIB_SUFFIX}
         ${CMAKE_CURRENT_BINARY_DIR}/../tnzbase/libtnzbase.${LIB_SUFFIX})
+    endif()
 
     if (UNIX AND NOT APPLE)
-        set(EXTRA_LIBS ${EXTRA_LIBS} ${OPENBLAS_LIB})
+        set(EXTRA_LIBS tnzcore tnzbase ${EXTRA_LIBS} ${OPENBLAS_LIB})
     endif()
 
     target_link_libraries(tnzext

@@ -340,11 +340,16 @@ if(WIN32)
         ${GLUT_LIB} ${GL_LIB} vfw32.lib
         tnzcore tnzbase tnzext)
 else()
-    set(EXTRA_LIBS
-        ${CMAKE_CURRENT_BINARY_DIR}/../tnzcore/libtnzcore.${LIB_SUFFIX}
-        ${CMAKE_CURRENT_BINARY_DIR}/../tnzbase/libtnzbase.${LIB_SUFFIX}
-        ${CMAKE_CURRENT_BINARY_DIR}/../tnzext/libtnzext.${LIB_SUFFIX}
-        ${USB_LIB})
+    if(APPLE)
+        set(EXTRA_LIBS
+            ${CMAKE_CURRENT_BINARY_DIR}/../tnzcore/libtnzcore.${LIB_SUFFIX}
+            ${CMAKE_CURRENT_BINARY_DIR}/../tnzbase/libtnzbase.${LIB_SUFFIX}
+            ${CMAKE_CURRENT_BINARY_DIR}/../tnzext/libtnzext.${LIB_SUFFIX}
+            ${USB_LIB})
+    else()
+        include_directories(../tnzcore ../tnzext)
+        set(EXTRA_LIBS tnzcore tnzext)
+    endif()
 
     target_link_libraries(toonzlib Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::Script ${GLUT_LIB} ${GL_LIB} ${EXTRA_LIBS})
 endif()
