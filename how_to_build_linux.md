@@ -34,10 +34,17 @@ $ rpm ...
 
 ### Installing required packages on ArchLinux
 
-TODO
 ```
-$ pacman ...
+$ sudo pacman -S base-devel cmake boost boost-libs qt5-base qt5-svg qt5-script qt5-tools lz4 libusb lzo libjpeg-turbo libtiff glew freeglut sdl freetype2
+$ sudo pacman -S blas cblas
 ```
+From AUR, using eg. yaourt:
+```
+$ yaourt -S superlu
+```
+
+Notes:
+* ArchLinux had BLAS splitted in blas and cblas
 
 ## Build instructions
 
