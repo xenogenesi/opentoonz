@@ -36,11 +36,7 @@ if(WIN32)
         tnzcore tnzbase toonzlib
         ws2_32.lib)
 else()
-    set(EXTRA_LIBS
-        ${CMAKE_CURRENT_BINARY_DIR}/../../tnzcore/libtnzcore.${LIB_SUFFIX}
-        ${CMAKE_CURRENT_BINARY_DIR}/../../tnzbase/libtnzbase.${LIB_SUFFIX}
-        ${CMAKE_CURRENT_BINARY_DIR}/../../toonzlib/libtoonzlib.${LIB_SUFFIX}
-        ${CMAKE_CURRENT_BINARY_DIR}/../../tnzext/libtnzext.${LIB_SUFFIX})
+	_find_toonz_library(EXTRA_LIBS "tnzcore;tnzbase;toonzlib;tnzext")
 endif()
 
 target_link_libraries(tfarm

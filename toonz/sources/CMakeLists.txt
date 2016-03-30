@@ -116,7 +116,7 @@ macro(_find_toonz_library OUT_LIB_LIST IN_LIB_LIST)
     foreach(arg ${IN_LIB_LIST})
         unset(COREPATH CACHE)
         # find しても cmake が走るときにはできていないので完全なパス名を生成して返すだけ
-        if(WIN32)
+        if(WIN32 OR UNIX)
             set(LIBPATH ${arg})
         else()
             set(LIBPATH ${CMAKE_CURRENT_BINARY_DIR}/../${arg}/lib${arg}${CMAKE_SHARED_LIBRARY_SUFFIX})
