@@ -12,6 +12,8 @@
 #include <QFont>
 #include <QFontDatabase>
 #include <QFontMetrics>
+#include <QImage>
+#include <QPainterPath>
 #include <QRawFont>
 
 
@@ -22,7 +24,7 @@
 #include "tpixelgr.h"
 #include "tfont.h"
 #include "tstroke.h"
-//#include "tcurves.h"
+#include "tcurves.h"
 #include "traster.h"
 #include <vector>
 #include <iostream>
@@ -97,7 +99,87 @@ TFont::Impl::~Impl()
 
 TPoint TFont::drawChar(TVectorImageP &image, wchar_t charcode, wchar_t nextCharCode) const
 {
-	//FIXME
+	QRawFont raw(QRawFont::fromFont(m_pimpl->m_font));
+
+	QChar chars[2] = { charcode, nextCharCode };
+	quint32 indices[2];
+	int count = 2;
+
+	if (!raw.glyphIndexesForChars(chars, 2, indices, &count) || count < 1)
+		return TPoint(0, 0);
+	QPainterPath path = raw.pathForGlyph(indices[0]);
+
+	// empty glyph, nothing to do
+	if (path.elementCount() < 1)
+		return getDistance(charcode, nextCharCode);
+
+	// force closing the last path
+	if (path.elementAt(path.elementCount()-1).type != QPainterPath::MoveToElement)
+		path.moveTo(0.0, 0.0);
+
+	int i, n = path.elementCount();
+	int strokes = 0;
+	std::vector<TThickPoint> points;
+
+
+	TThickPoint pts[4];
+	int nCubicPts = 0;
+
+	for (i = 0; i < n; i++) {
+		QPainterPath::Element e = path.elementAt(i);
+		e.y = -e.y;
+
+
+		switch (e.type) {
+		case QPainterPath::MoveToElement:
+			if (!points.empty()) {
+
+				if (points.back() != points.front()) {
+					points.push_back(0.5 * (points.back() + points.front()));
+					points.push_back(points.front());
+				}
+
+				TStroke *stroke = new TStroke(points);
+				stroke->setSelfLoop(true);
+				image->addStroke(stroke);
+				strokes++;
+				points.clear();
+			}
+			points.push_back(TThickPoint(e.x, e.y, 0));
+			break;
+		case QPainterPath::LineToElement:
+		{
+			TThickPoint p0 = points.back();
+			TThickPoint p1 = TThickPoint(e.x, e.y, 0);
+			points.push_back((p0 + p1) * 0.5);
+			points.push_back(p1);
+			break;
+		}
+		case QPainterPath::CurveToElement:
+			pts[0] = points.back();
+			pts[1] = TThickPoint(e.x, e.y, 0);
+			nCubicPts = 2;
+			break;
+		case QPainterPath::CurveToDataElement:
+			pts[nCubicPts++] = TThickPoint(e.x, e.y, 0);
+			if (nCubicPts == 4) {
+				vector<TThickQuadratic *> chunkArray;
+				computeQuadraticsFromCubic(pts[0],pts[1],pts[2],pts[3], 0.09,
+					chunkArray);
+
+				for (int j = 0; j < chunkArray.size(); j++) {
+					points.push_back(chunkArray[j]->getP1());
+					points.push_back(chunkArray[j]->getP2());
+				}
+				nCubicPts = 0;
+			}
+			break;
+		}
+	}
+
+	if (strokes > 1)
+		image->group(0, strokes);
+
 	return getDistance(charcode, nextCharCode);
 }
 
@@ -105,9 +187,34 @@ TPoint TFont::drawChar(TVectorImageP &image, wchar_t charcode, wchar_t nextCharC
 
 TPoint TFont::drawChar(TRasterGR8P &outImage, TPoint &unused, wchar_t charcode, wchar_t nextCharCode) const
 {
-	//FIXME
-//	appDrawChar(outImage, m_pimpl, charcode);
-//	outImage->yMirror();
+	QRawFont raw(QRawFont::fromFont(m_pimpl->m_font));
+
+	QChar chars[2] = { charcode, nextCharCode };
+	quint32 indices[2];
+	int count = 2;
+
+	if (!raw.glyphIndexesForChars(chars, 2, indices, &count) || count < 1)
+		return TPoint(0, 0);
+
+	QImage image(raw.alphaMapForGlyph(indices[0], QRawFont::PixelAntialiasing));
+
+	if (image.format() != QImage::Format_Indexed8)
+		throw TException(L"bad QImage format " + image.format());
+
+	int height = image.height();
+	int width = image.width();
+
+	outImage = TRasterGR8P(width, height);
+
+/*
+	TPixelGR8 bgp;
+	bgp.value = 255;
+	outImage->fill(bgp);
+*/
+	void *data = outImage->getRawData();
+
+	memcpy(data, image.bits(), image.byteCount());
+
 	return getDistance(charcode, nextCharCode);
 }
 
@@ -115,7 +222,38 @@ TPoint TFont::drawChar(TRasterGR8P &outImage, TPoint &unused, wchar_t charcode, 
 
 TPoint TFont::drawChar(TRasterCM32P &outImage, TPoint &unused, int inkId, wchar_t charcode, wchar_t nextCharCode) const
 {
-	//FIXME
+	TRasterGR8P grayAppImage;
+	this->drawChar(grayAppImage, unused, charcode, nextCharCode);
+
+	int lx = grayAppImage->getLx();
+	int ly = grayAppImage->getLy();
+
+	outImage = TRasterCM32P(lx, ly);
+
+	assert(TPixelCM32::getMaxTone() == 255);
+	TPixelCM32 bgColor(0, 0, TPixelCM32::getMaxTone());
+	grayAppImage->lock();
+	outImage->lock();
+	int ty = 0;
+	for (int gy = ly - 1; gy >= 0; --gy, ++ty) {
+		TPixelGR8 *srcPix = grayAppImage->pixels(gy);
+		TPixelCM32 *tarPix = outImage->pixels(ty);
+		for (int x = 0; x < lx; ++x) {
+			int tone = srcPix->value;
+
+			if (tone == 255)
+				*tarPix = bgColor;
+			else
+				*tarPix = TPixelCM32(inkId, 0, tone);
+
+			++srcPix;
+			++tarPix;
+		}
+	}
+	grayAppImage->unlock();
+	outImage->unlock();
+
+
 	return getDistance(charcode, nextCharCode);
 }
 
