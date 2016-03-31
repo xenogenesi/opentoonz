@@ -69,7 +69,9 @@ IGS_LINE_BLUR_EXPORT void convert(
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 
+#if defined _WIN32
 #include <windows.h>
+#endif
 #include <stdio.h>
 #include <math.h>
 #include <stdint.h>
