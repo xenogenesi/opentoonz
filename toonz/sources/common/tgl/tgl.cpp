@@ -711,8 +711,8 @@ void tglDoneCurrent(TGlContext context)
 		reinterpret_cast<QGLContext *>(context)->doneCurrent();
 }
 
-#elif @unknow platform !
-
+#else
+	#error "@unknow platform !"
 #endif
 
 //-----------------------------------------------------------------------------
