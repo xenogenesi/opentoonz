@@ -29,7 +29,36 @@ void tnz_error_fun(png_structp pngPtr, png_const_charp error_message)
 }
 
 #if !defined(TNZ_LITTLE_ENDIAN)
-TNZ_LITTLE_ENDIAN undefined !!
+#error "TNZ_LITTLE_ENDIAN undefined !!"
+#endif
+
+//=========================================================
+/* Check for the older version of libpng */
+#if (PNG_LIBPNG_VER_MAJOR == 1) && (PNG_LIBPNG_VER_MINOR < 4)
+#define LIBPNG_VERSION_12
+#endif
+
+#ifdef LIBPNG_VERSION_12
+extern "C" {
+
+static png_uint_32 png_get_current_row_number(const png_structp png_ptr)
+{
+   /* See the comments in png.h - this is the sub-image row when reading and
+    * interlaced image.
+    */
+   if (png_ptr != NULL)
+      return png_ptr->row_number;
+
+   return PNG_UINT_32_MAX; /* help the app not to fail silently */
+}
+
+static png_byte png_get_current_pass_number(const png_structp png_ptr)
+{
+   if (png_ptr != NULL)
+      return png_ptr->pass;
+   return 8; /* invalid */
+}
+}
 #endif
 
 //=========================================================
@@ -99,7 +128,7 @@ public:
 		if (!m_png_ptr)
 			return;
 
-		png_set_longjmp_fn(m_png_ptr, tnz_abort, sizeof(jmp_buf)); /* ignore all fatal errors */
+		//png_set_longjmp_fn(m_png_ptr, tnz_abort, sizeof(jmp_buf)); /* ignore all fatal errors */
 
 		m_canDelete = 1;
 		m_info_ptr = png_create_info_struct(m_png_ptr);
@@ -144,7 +173,7 @@ public:
 			delete[] m_rowBuffer;
 		//m_rowBuffer = new unsigned char[rowBytes];
 
-		TUINT32 lx = 0, ly = 0;
+		png_uint_32 lx = 0, ly = 0;
 		png_get_IHDR(m_png_ptr, m_info_ptr, &lx, &ly, &m_bit_depth, &m_color_type,
 					 &m_interlace_type, &m_compression_type, &m_filter_type);
 		m_info.m_lx = lx;
