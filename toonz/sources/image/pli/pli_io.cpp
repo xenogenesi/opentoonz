@@ -473,7 +473,12 @@ void ParsedPli::setMaxThickness(double maxThickness)
 	imp->m_maxThickness = maxThickness;
 };
 
-#define ABS(a)  ((a) < 0 ? (-(a)) : (a))
+/* avoid 'abs' double promotion for some platforms  */
+template <typename T>
+T ABS(T a)
+{
+	return (a > 0) ? a : -a;
+}
 
 /*=====================================================================*/
 
