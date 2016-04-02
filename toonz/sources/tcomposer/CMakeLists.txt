@@ -12,3 +12,7 @@ target_link_libraries(tcomposer
     image
     colorfx
     toonzqt)
+
+if (UNIX AND NOT APPLE)
+    install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/tcomposer DESTINATION usr/bin)
+endif()

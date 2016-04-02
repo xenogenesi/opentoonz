@@ -32,3 +32,7 @@ if (APPLE AND PLATFORM EQUAL 32)
         POST_BUILD COMMAND
         ${CMAKE_INSTALL_NAME_TOOL} -add_rpath @executable_path/. ${bin})
 endif()
+
+if (UNIX AND NOT APPLE AND PLATFORM EQUAL 32)
+    install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/t32bitsrv DESTINATION usr/bin)
+endif()
