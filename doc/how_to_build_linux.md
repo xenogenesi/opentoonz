@@ -32,6 +32,13 @@ TODO
 $ rpm ...
 ```
 
+### Installing required packages on Fedora
+(it may include some useless packages)
+
+```
+dnf install gcc gcc-c++ automake cmake boost boost-devel SuperLU SuperLU-devel lz4-devel libusb-devel lzo-devel libjpeg-turbo-devel libtiff-devel GLEW libGLEW freeglut-devel freeglut SDL SDL-devel freetype-devel libpng-devel qt5-base qt5-qtbase-devel qt5-qtsvg qt5-qtsvg-devel qt5-qtscript qt5-qtscript-devel qt5-qttools qt5-qttools-devel blas blas-devel
+```
+
 ### Installing required packages on ArchLinux
 
 ```
