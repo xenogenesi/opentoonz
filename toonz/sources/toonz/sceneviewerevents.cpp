@@ -960,6 +960,15 @@ void SceneViewer::contextMenuEvent(QContextMenuEvent *e)
 	if (m_freezedStatus != NO_FREEZED)
 		return;
 
+	/* On windows the widget receive the release event before the menu is shown,
+	   on linux the release event is lost and never received by the widget */
+#ifndef WIN32
+	QMouseEvent fakeRelease(QEvent::MouseButtonRelease, e->pos(),
+        Qt::RightButton, Qt::NoButton, Qt::NoModifier);
+
+	QApplication::instance()->sendEvent(this, &fakeRelease);
+#endif
+
 	TPoint winPos(e->pos().x(), height() - e->pos().y());
 	vector<int> columnIndices;
 	// enable to select all the columns regardless of the click position
