@@ -1,5 +1,5 @@
 # preferred homebrew's directories.
-find_path(SUPERLU_INCLUDE_DIR NAMES slu_Cnames.h HINTS PATH_SUFFIXES superlu43/4.3_1/include/superlu superlu/SuperLU_4.1/include superlu)
+find_path(SUPERLU_INCLUDE_DIR NAMES slu_Cnames.h HINTS "/usr/include/SuperLU" PATH_SUFFIXES superlu43/4.3_1/include/superlu superlu/SuperLU_4.1/include superlu)
 find_library(SUPERLU_LIBRARY NAMES libsuperlu.so HINTS PATH_SUFFIXES superlu43/4.3_1/lib superlu)
 
 message("***** SuperLU Header path:" ${SUPERLU_INCLUDE_DIR})
