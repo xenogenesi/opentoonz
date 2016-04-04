@@ -320,7 +320,7 @@ add_subdirectory(tcleanupper)
 add_subdirectory(tcomposer)
 add_subdirectory(tconverter)
 add_subdirectory(toonzfarm)
-if((PLATFORM EQUAL 32) AND (NOT UNIX))
+if((PLATFORM EQUAL 32) AND (WIN32 OR APPLE))
     add_subdirectory(t32bitsrv)
 endif()
 
