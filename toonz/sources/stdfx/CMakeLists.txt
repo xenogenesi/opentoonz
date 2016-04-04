@@ -279,5 +279,5 @@ else ()
 endif ()
 
 if (UNIX AND NOT APPLE)
-    INSTALL(TARGETS tnzstdfx LIBRARY DESTINATION usr/lib/toonz)
+    INSTALL(TARGETS tnzstdfx LIBRARY DESTINATION usr/lib)
 endif()

@@ -119,5 +119,5 @@ endif()
 target_link_libraries(tnztools Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Network Qt5::OpenGL ${GLUT_LIB} ${EXTRA_LIBS} ${GL_LIB})
 
 if (UNIX AND NOT APPLE)
-    INSTALL(TARGETS tnztools LIBRARY DESTINATION usr/lib/toonz)
+    INSTALL(TARGETS tnztools LIBRARY DESTINATION usr/lib)
 endif()

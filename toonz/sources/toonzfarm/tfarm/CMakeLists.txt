@@ -52,5 +52,5 @@ target_link_libraries(tfarm
     ${GLUT_LIB} ${GL_LIB} ${EXTRA_LIBS})
 
 if (UNIX AND NOT APPLE)
-    INSTALL(TARGETS tfarm LIBRARY DESTINATION usr/lib/toonz)
+    INSTALL(TARGETS tfarm LIBRARY DESTINATION usr/lib)
 endif()

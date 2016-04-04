@@ -39,5 +39,5 @@ message("FIND_FILE:" ${EXTRA_LIBS})
 target_link_libraries(colorfx Qt5::Core ${GL_LIB} ${EXTRA_LIBS})
 
 if (UNIX AND NOT APPLE)
-    INSTALL(TARGETS colorfx LIBRARY DESTINATION usr/lib/toonz)
+    INSTALL(TARGETS colorfx LIBRARY DESTINATION usr/lib)
 endif()

@@ -312,5 +312,5 @@ target_link_libraries(tnzcore
     ${EXTRA_LIBS})
 
 if (UNIX AND NOT APPLE)
-    INSTALL(TARGETS tnzcore LIBRARY DESTINATION usr/lib/toonz)
+    INSTALL(TARGETS tnzcore LIBRARY DESTINATION usr/lib)
 endif()
