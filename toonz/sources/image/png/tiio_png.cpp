@@ -34,31 +34,31 @@ void tnz_error_fun(png_structp pngPtr, png_const_charp error_message)
 
 //=========================================================
 /* Check for the older version of libpng */
-#if (PNG_LIBPNG_VER_MAJOR == 1) && (PNG_LIBPNG_VER_MINOR < 4)
-#define LIBPNG_VERSION_12
-#endif
 
-#ifdef LIBPNG_VERSION_12
+#if defined(PNG_LIBPNG_VER)
+#if (PNG_LIBPNG_VER < 10527)
 extern "C" {
-
 static png_uint_32 png_get_current_row_number(const png_structp png_ptr)
 {
-   /* See the comments in png.h - this is the sub-image row when reading and
-    * interlaced image.
-    */
-   if (png_ptr != NULL)
-      return png_ptr->row_number;
+	/* See the comments in png.h - this is the sub-image row when reading and
+	 * interlaced image.
+	 */
+	if (png_ptr != NULL)
+		return png_ptr->row_number;
 
-   return PNG_UINT_32_MAX; /* help the app not to fail silently */
+	return PNG_UINT_32_MAX; /* help the app not to fail silently */
 }
 
 static png_byte png_get_current_pass_number(const png_structp png_ptr)
 {
-   if (png_ptr != NULL)
-      return png_ptr->pass;
-   return 8; /* invalid */
+	if (png_ptr != NULL)
+		return png_ptr->pass;
+	return 8; /* invalid */
 }
 }
+#endif
+#else
+#error "PNG_LIBPNG_VER undefined, libpng too old?"
 #endif
 
 //=========================================================
