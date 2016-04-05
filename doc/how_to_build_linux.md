@@ -53,6 +53,12 @@ $ yaourt -S superlu
 Notes:
 * ArchLinux had BLAS splitted in blas and cblas
 
+### Installing required packages on openSUSE
+
+```
+zypper in boost-devel cmake gcc-c++ freeglut-devel freetype2-devel glew-devel libjpeg-devel liblz4-devel libqt5-linguist-devel libQt5OpenGL5 libqt5-qtbase-devel libqt5-qtscript-devel libqt5-qtsvg-devel lzo-devel libtiff-devel libusb-devel openblas-devel SDL-devel superlu-devel zlib-devel
+```
+
 ## Build instructions
 
 ### cloning the git tree
