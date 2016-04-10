@@ -257,7 +257,7 @@ elseif(UNIX)
     pkg_check_modules(SDL_LIB REQUIRED sdl)
 endif()
 
-include_directories(BEFORE ${TIFF_INCLUDE_DIR})
+include_directories(BEFORE ${TIFF_INCLUDE_DIR} ${PNG_INCLUDE_DIRS})
 
 if(WIN32 OR APPLE)
     find_path(BOOST_ROOT include/boost boost HINTS ${THIRDPARTY_LIBS_HINTS} PATH_SUFFIXES boost155/1.55.0_1 boost/boost_1_55_0/)
